@@ -1,5 +1,6 @@
 package com.example.duksunggoodsserver.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sun.istack.NotNull;
 import lombok.*;
 
@@ -51,15 +52,4 @@ public class Item {
     @ManyToOne
     private DemandSurveyType demandSurveyType;
 
-    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-    private List<Community> communityList = new ArrayList<Community>();
-
-    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-    private List<Like> likeList = new ArrayList<Like>();
-
-    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-    private List<Buy> buyList = new ArrayList<Buy>();
-
-    @OneToOne
-    private Promotion promotion;
 }

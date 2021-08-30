@@ -50,21 +50,4 @@ public class User {
     @LastModifiedBy
     private String updatedBy;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Community> communityList = new ArrayList<Community>();
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Like> likeList = new ArrayList<Like>();
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Item> itemList = new ArrayList<Item>();
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Buy> buyList = new ArrayList<Buy>();
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Promotion> promotionList = new ArrayList<Promotion>();
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Message> messageList = new ArrayList<Message>();
 }

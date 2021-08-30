@@ -21,7 +21,4 @@ public class DemandSurveyType {
     @NotNull
     private String title;
 
-    @OneToMany(mappedBy = "demandSurveyType", fetch = FetchType.LAZY)
-    private List<Item> itemList = new ArrayList<Item>();
-
 }

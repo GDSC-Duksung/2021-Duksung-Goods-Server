@@ -32,7 +32,4 @@ public class Community {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "community", fetch = FetchType.LAZY)
-    private List<Comments> commentsList = new ArrayList<Comments>();
-
 }

@@ -29,4 +29,5 @@ public class Message {
 
     @ManyToOne
     private User user;
+
 }

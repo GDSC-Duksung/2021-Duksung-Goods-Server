@@ -21,7 +21,4 @@ public class Category {
     @NotNull
     private String title;
 
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
-    private List<Item> itemList = new ArrayList<Item>();
-
 }

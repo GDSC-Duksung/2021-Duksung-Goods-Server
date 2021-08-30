@@ -20,4 +20,5 @@ public class ChatRoomJoin {
 
     @ManyToOne
     private User user;
+
 }

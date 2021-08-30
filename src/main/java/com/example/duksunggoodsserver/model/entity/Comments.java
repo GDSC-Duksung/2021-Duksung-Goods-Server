@@ -26,4 +26,5 @@ public class Comments {
 
     @ManyToOne
     private Community community;
+
 }
