@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Promotion {
+public class Promotion{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

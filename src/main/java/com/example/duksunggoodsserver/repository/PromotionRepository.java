@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PromotionRepository extends JpaRepository <Promotion, Long> {
-    List<Promotion> findAllBy(Long id);
+public interface PromotionRepository extends JpaRepository<Promotion, Long> {
 }
