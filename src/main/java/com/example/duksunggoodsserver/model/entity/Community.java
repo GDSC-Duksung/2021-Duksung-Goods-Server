@@ -1,12 +1,12 @@
 package com.example.duksunggoodsserver.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sun.istack.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,5 +31,10 @@ public class Community {
 
     @CreatedDate
     private LocalDateTime createdAt;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "community",
+            fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Comment> comment;
 
 }

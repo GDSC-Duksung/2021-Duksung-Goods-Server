@@ -1,5 +1,7 @@
 package com.example.duksunggoodsserver.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sun.istack.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Comments {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,6 +27,11 @@ public class Comments {
     private LocalDateTime createdAt;
 
     @ManyToOne
+    @JoinColumn(name = "community_id")
+    @JsonManagedReference
     private Community community;
 
+    @ManyToOne
+    @JsonManagedReference
+    private User user;
 }
