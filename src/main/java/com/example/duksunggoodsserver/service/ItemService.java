@@ -16,6 +16,11 @@ public class ItemService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    public List<Item> getItemList(Long id) {
+        List<Item> item = itemRepository.findAllByUserId(id);
+        return item;
+    }
+
     public Optional<Item> getItemDetail(Long id) {
         return itemRepository.findItemById(id);
     }
