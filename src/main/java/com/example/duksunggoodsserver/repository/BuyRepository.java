@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface BuyRepository extends JpaRepository<Buy, Long> {
     List<Buy> findAllByUserId(Long id);
+    List<Buy> findAllByItemId(Long id);
 }

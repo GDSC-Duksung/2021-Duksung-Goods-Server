@@ -16,4 +16,9 @@ public class BuyService {
         List<Buy> buy = buyRepository.findAllByUserId(id);
         return buy;
     }
+
+    public List<Buy> getSellFormList(Long id) {
+        List<Buy> buy = buyRepository.findAllByItemId(id);
+        return buy;
+    }
 }

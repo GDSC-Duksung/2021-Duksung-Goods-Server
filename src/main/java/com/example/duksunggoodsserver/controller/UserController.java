@@ -31,4 +31,9 @@ public class UserController {
     public ResponseEntity<List<Item>> getSellList(@PathVariable Long id) {
         return ResponseEntity.ok(itemService.getItemList(id));
     }
+
+    @GetMapping("/mypage/{id}/sell/{itemId}")
+    public ResponseEntity<List<Buy>> getSellFormList(@PathVariable Long id, @PathVariable Long itemId) {
+        return ResponseEntity.ok(buyService.getSellFormList(itemId));
+    }
 }
