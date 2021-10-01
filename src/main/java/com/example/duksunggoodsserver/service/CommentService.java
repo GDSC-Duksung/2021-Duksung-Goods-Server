@@ -28,11 +28,10 @@ public class CommentService {
         return comment;
     }
 
-    public void saveComment(Long id, Map<String, String> comment) {
-        Optional<Community> communityId =
-                communityRepository.findById(id);
+    public Comment saveComment(Long id, Map<String, String> comment) {
+        Optional<Community> communityId = communityRepository.findById(id);
         Optional<User> userId = userRepository.findById(1L); // TODO: 임시로 해놓음. 추후에 본인 id로 변경
-        commentRepository.save(Comment.builder()
+        return commentRepository.save(Comment.builder()
                 .contents(comment.get("contents"))
                 .community(communityId.get())
                 .createdAt(LocalDateTime.now())

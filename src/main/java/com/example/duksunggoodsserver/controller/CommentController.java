@@ -5,6 +5,7 @@ import com.example.duksunggoodsserver.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,19 +20,18 @@ public class CommentController {
     CommentService commentService;
 
     @GetMapping("/{id}/comments")
-    public List<Comment> getCommentList(@PathVariable Long id) {
-        List<Comment> commentList = commentService.getCommentList(id);
-        return commentList;
+    public ResponseEntity<List<Comment>> getCommentList(@PathVariable Long id) {
+        return ResponseEntity.ok(commentService.getCommentList(id));
     }
 
     @PostMapping("/{id}/comment")
-    public void postComment(@PathVariable Long id, @RequestBody Map<String, String> comment) {
-        commentService.saveComment(id, comment);
+    public ResponseEntity<Comment> postComment(@PathVariable Long id, @RequestBody Map<String, String> comment) {
+        return ResponseEntity.ok(commentService.saveComment(id, comment));
     }
 
     @DeleteMapping("/comment/{id}")
-    public void deleteComment(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
         commentService.deleteComment(id);
-        // TODO: null일 때 처리
+        return ResponseEntity.ok().build();
     }
 }
