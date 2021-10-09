@@ -1,0 +1,15 @@
+spring:
+  datasource: # mysql
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/[DB_SCHEMA]?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
+    username: [DB_ID]
+    password: [DB_PW]
+  jpa:
+    show-sql: true
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
