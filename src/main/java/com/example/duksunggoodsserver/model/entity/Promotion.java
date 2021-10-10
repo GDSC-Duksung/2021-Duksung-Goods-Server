@@ -29,9 +29,19 @@ public class Promotion {
     private LocalDateTime endDate;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToOne
     private Item item;
 
+    public Promotion(PromotionRequestDTO requestDTO) {
+        this.id = requestDTO.getId();
+        this.image = requestDTO.getImage();
+        this.content = requestDTO.getContent();
+        this.startDate = requestDTO.getStartDate();
+        this.endDate = requestDTO.getEndDate();
+        this.user = requestDTO.getUser();
+        this.item = requestDTO.getItem();
+    }
 }
