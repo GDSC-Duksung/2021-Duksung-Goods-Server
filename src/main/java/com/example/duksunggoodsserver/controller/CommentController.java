@@ -1,10 +1,10 @@
 package com.example.duksunggoodsserver.controller;
 
-import com.example.duksunggoodsserver.model.entity.Comment;
+import com.example.duksunggoodsserver.model.dto.response.CommentResponseDto;
 import com.example.duksunggoodsserver.service.CommentService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,20 +16,23 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/community")
 public class CommentController {
-    @Autowired
-    CommentService commentService;
+
+    private final CommentService commentService;
 
     @GetMapping("/{id}/comments")
-    public ResponseEntity<List<Comment>> getCommentList(@PathVariable Long id) {
+    @ApiOperation(value = "댓글 조회")
+    public ResponseEntity<List<CommentResponseDto>> getCommentList(@PathVariable Long id) {
         return ResponseEntity.ok(commentService.getCommentList(id));
     }
 
     @PostMapping("/{id}/comment")
-    public ResponseEntity<Comment> postComment(@PathVariable Long id, @RequestBody Map<String, String> comment) {
+    @ApiOperation(value = "댓글 생성")
+    public ResponseEntity<CommentResponseDto> postComment(@PathVariable Long id, @RequestBody Map<String, String> comment) {
         return ResponseEntity.ok(commentService.saveComment(id, comment));
     }
 
     @DeleteMapping("/comment/{id}")
+    @ApiOperation(value = "댓글 삭제")
     public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
         commentService.deleteComment(id);
         return ResponseEntity.ok().build();

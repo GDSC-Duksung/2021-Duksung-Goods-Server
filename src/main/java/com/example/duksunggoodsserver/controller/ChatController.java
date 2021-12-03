@@ -1,5 +1,6 @@
 package com.example.duksunggoodsserver.controller;
 
+import com.example.duksunggoodsserver.model.dto.response.MessageResponseDto;
 import com.example.duksunggoodsserver.model.entity.Item;
 import com.example.duksunggoodsserver.model.entity.Message;
 import com.example.duksunggoodsserver.service.ChatService;
@@ -23,17 +24,17 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/chat")
 public class ChatController {
-    @Autowired
-    ChatService chatService;
+
+    private final ChatService chatService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getMessagesById(@PathVariable Long id) {
 
-        List<Message> messages = chatService.getMessageList(id);
+        List<MessageResponseDto> messageResponseDtoList = chatService.getMessageList(id);
         Map<String, Object> res = new HashMap<>();
 
         res.put("result", "SUCCESS");
-        res.put("data", messages);
+        res.put("data", messageResponseDtoList);
 
         return ResponseEntity.ok().body(res);
     }
@@ -41,11 +42,11 @@ public class ChatController {
     @GetMapping("/all")
     public ResponseEntity<Map<String, Object>> getAllItems() {
 
-        List<Message> messages = chatService.getAllMessages();
+        List<MessageResponseDto> messageResponseDtoList = chatService.getAllMessages();
         Map<String, Object> res = new HashMap<>();
 
         res.put("result", "SUCCESS");
-        res.put("data", messages);
+        res.put("data", messageResponseDtoList);
 
         return ResponseEntity.ok().body(res);
     }

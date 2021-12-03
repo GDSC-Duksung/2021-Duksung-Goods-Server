@@ -1,29 +1,45 @@
 package com.example.duksunggoodsserver.service;
 
+import com.example.duksunggoodsserver.model.dto.response.ItemResponseDto;
 import com.example.duksunggoodsserver.model.entity.Item;
-import com.example.duksunggoodsserver.repository.CategoryRepository;
 import com.example.duksunggoodsserver.repository.ItemRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ItemService {
-    @Autowired
-    private ItemRepository itemRepository;
-    @Autowired
-    private CategoryRepository categoryRepository;
 
-    public List<Item> getItemList(Long id) {
-        List<Item> item = itemRepository.findAllByUserId(id);
-        return item;
+    private final ItemRepository itemRepository;
+    private final ModelMapper modelMapper;
+
+    public List<ItemResponseDto> getItemList(Long id) {
+
+        List<ItemResponseDto> itemResponseDtoList = itemRepository.findAllByUserId(id)
+                .stream().map(item -> modelMapper.map(item, ItemResponseDto.class))
+                .collect(Collectors.toList());
+        return itemResponseDtoList;
     }
 
-    public Optional<Item> getItemDetail(Long id) {
-        return itemRepository.findItemById(id);
+    public ItemResponseDto getItemDetail(Long id) {
+
+        Optional<Item> item = itemRepository.findItemById(id);
+        ItemResponseDto itemResponseDto = modelMapper.map(item, ItemResponseDto.class);
+        return itemResponseDto;
     }
 
-    public List<Item> getAllItems() { return itemRepository.findAll(); }
+    public List<ItemResponseDto> getAllItems() {
+
+        List<ItemResponseDto> itemResponseDtoList = itemRepository.findAll()
+                .stream().map(item -> modelMapper.map(item, ItemResponseDto.class))
+                .collect(Collectors.toList());
+        return itemResponseDtoList;
+    }
 }

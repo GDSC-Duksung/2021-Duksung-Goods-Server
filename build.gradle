@@ -37,6 +37,12 @@ dependencies {
     implementation 'org.webjars:stomp-websocket:2.3.3'
     implementation 'org.webjars:bootstrap:3.3.7'
     implementation 'org.webjars:jquery:3.1.1-1'
+
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
+
+    implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+
 }
 
 test {
