@@ -1,61 +1,78 @@
 package com.example.duksunggoodsserver.service;
 
+import com.example.duksunggoodsserver.model.dto.response.PromotionResponseDto;
 import com.example.duksunggoodsserver.model.entity.Item;
 import com.example.duksunggoodsserver.model.entity.Promotion;
-import com.example.duksunggoodsserver.model.entity.PromotionRequestDTO;
+import com.example.duksunggoodsserver.model.dto.request.PromotionRequestDto;
 import com.example.duksunggoodsserver.model.entity.User;
 import com.example.duksunggoodsserver.repository.ItemRepository;
 import com.example.duksunggoodsserver.repository.PromotionRepository;
 import com.example.duksunggoodsserver.repository.UserRepository;
-import org.apache.tomcat.jni.Local;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class PromotionService {
-    @Autowired
-    PromotionRepository PromotionRepository;
 
-    @Autowired
-    UserRepository userRepository;
+    private final PromotionRepository promotionRepository;
+    private final UserRepository userRepository;
+    private final ItemRepository itemRepository;
+    private final ModelMapper modelMapper;
 
-    @Autowired
-    private ItemRepository itemRepository;
+    public List<PromotionResponseDto> getAllPromotions(){
 
-    public List<Promotion> getAllPromotions(){
-        List<Promotion> promotionList = PromotionRepository.findAll();
+        List<PromotionResponseDto> promotionResponseDtoList = promotionRepository.findAll()
+                .stream().map(promotion -> modelMapper.map(promotion, PromotionResponseDto.class))
+                .collect(Collectors.toList());
 
         //랜덤섞기
-        Collections.shuffle(promotionList);
+        Collections.shuffle(promotionResponseDtoList);
 
         //추출
-        if(promotionList.size() <4){
-            return promotionList;
+        if (promotionResponseDtoList.size() < 4) {
+            return promotionResponseDtoList;
+        } else {
+            return promotionResponseDtoList.subList(0,4);
         }
-        else{
-            return promotionList.subList(0,4);
-        }
+
+        // TODO: Spring batch로 일정시간마다 특정 정책을 가지고 promotion 가져오기
+        // TODO: endDate 끝나면 삭제
     }
 
-    public Optional<Promotion> getPromotion(Long id){
-        return PromotionRepository.findItemById(id);
+    public PromotionResponseDto getPromotion(Long id){
+
+        Optional<Promotion> promotion = promotionRepository.findById(id);
+        PromotionResponseDto promotionResponseDto = modelMapper.map(promotion.get(), PromotionResponseDto.class);
+        return promotionResponseDto;
     }
 
-    public Promotion createPromotion(@RequestBody PromotionRequestDTO requestDTO){
-        Promotion promotion = new Promotion(requestDTO);
-        return PromotionRepository.save(promotion);
+    public PromotionResponseDto createPromotion(@RequestBody PromotionRequestDto requestDto){
+        Optional<User> user = userRepository.findById(requestDto.getUserId()); // TODO: 로그인 구현 완료시, access_token으로 사용자 찾기
+        Optional<Item> item = itemRepository.findById(requestDto.getItemId());
+        Promotion newPromotion = promotionRepository.save(Promotion.builder()
+                .image(requestDto.getImage()) // TODO: S3 연결
+                .content(requestDto.getContent())
+                .startDate(requestDto.getStartDate())
+                .endDate(requestDto.getEndDate())
+                .user(user.get())
+                .item(item.get())
+                .build());
+        return modelMapper.map(newPromotion, PromotionResponseDto.class);
     }
 
     public Long deletePromotion(@PathVariable Long id){
-        PromotionRepository.deleteById(id);
+        promotionRepository.deleteById(id);
         return id;
     }
-
 }

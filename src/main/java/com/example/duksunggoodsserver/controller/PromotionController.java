@@ -1,61 +1,64 @@
 package com.example.duksunggoodsserver.controller;
 
-import com.example.duksunggoodsserver.model.entity.Promotion;
-import com.example.duksunggoodsserver.model.entity.PromotionRequestDTO;
+import com.example.duksunggoodsserver.model.dto.response.PromotionResponseDto;
+import com.example.duksunggoodsserver.model.dto.request.PromotionRequestDto;
 import com.example.duksunggoodsserver.service.PromotionService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/promotions")
 public class PromotionController {
-    @Autowired
-    com.example.duksunggoodsserver.service.PromotionService PromotionService;
+
+    private final PromotionService promotionService;
 
     @GetMapping("/")
+    @ApiOperation(value = "모든 배너 조회")
     public ResponseEntity<Map<String, Object>> getAllPromotions(){
-        List<Promotion> promotions = PromotionService.getAllPromotions();
+        List<PromotionResponseDto> promotionResponseDtoList = promotionService.getAllPromotions();
 
         Map<String, Object> res = new HashMap<>();
-        res.put("data", promotions);
-        res.put("size", promotions.size());
+        res.put("data", promotionResponseDtoList);
+        res.put("size", promotionResponseDtoList.size());
 
         return ResponseEntity.ok().body(res);
     }
 
     @GetMapping("/{id}")
+    @ApiOperation(value = "배너 1개 조회")
     public ResponseEntity<Map<String, Object>> getPromotion(@PathVariable Long id){
-        Optional<Promotion> promotion = PromotionService.getPromotion(id);
+        PromotionResponseDto promotionResponseDto = promotionService.getPromotion(id);
 
-        if(promotion.isEmpty()){
+        if(promotionResponseDto == null) {
             return ResponseEntity.notFound().build();
         }
 
         Map<String, Object> res = new HashMap<>();
-        res.put("data", promotion);
+        res.put("data", promotionResponseDto);
 
         return ResponseEntity.ok().body(res);
     }
 
     @PostMapping("/")
-    public ResponseEntity createPromotion(@RequestBody PromotionRequestDTO requestDto){
-        Promotion promotion = PromotionService.createPromotion(requestDto);
-        return ResponseEntity.ok().body(promotion);
+    @ApiOperation(value = "배너 생성")
+    public ResponseEntity createPromotion(@RequestBody PromotionRequestDto requestDto){
+        PromotionResponseDto promotionResponseDto = promotionService.createPromotion(requestDto);
+        return ResponseEntity.ok().body(promotionResponseDto);
     }
 
     @DeleteMapping("/{id}")
+    @ApiOperation(value = "배너 삭제")
     public ResponseEntity<Map<String, Object>> deletePromotion(@PathVariable Long id){
-        Long promotion = PromotionService.deletePromotion(id);
+        Long promotion = promotionService.deletePromotion(id);
 
         Map<String, Object> res = new HashMap<>();
         res.put("data", promotion);

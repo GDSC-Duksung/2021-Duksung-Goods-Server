@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class Promotion {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,13 +36,4 @@ public class Promotion {
     @OneToOne
     private Item item;
 
-    public Promotion(PromotionRequestDTO requestDTO) {
-        this.id = requestDTO.getId();
-        this.image = requestDTO.getImage();
-        this.content = requestDTO.getContent();
-        this.startDate = requestDTO.getStartDate();
-        this.endDate = requestDTO.getEndDate();
-        this.user = requestDTO.getUser();
-        this.item = requestDTO.getItem();
-    }
 }
