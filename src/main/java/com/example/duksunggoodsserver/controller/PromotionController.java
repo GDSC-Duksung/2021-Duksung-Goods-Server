@@ -1,17 +1,20 @@
 package com.example.duksunggoodsserver.controller;
 
+import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
+import com.example.duksunggoodsserver.config.responseEntity.StatusEnum;
 import com.example.duksunggoodsserver.model.dto.response.PromotionResponseDto;
 import com.example.duksunggoodsserver.model.dto.request.PromotionRequestDto;
 import com.example.duksunggoodsserver.service.PromotionService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
+import java.nio.charset.Charset;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,46 +26,83 @@ public class PromotionController {
 
     @GetMapping("/")
     @ApiOperation(value = "모든 배너 조회")
-    public ResponseEntity<Map<String, Object>> getAllPromotions(){
+    public ResponseEntity getAllPromotions(){
+
         List<PromotionResponseDto> promotionResponseDtoList = promotionService.getAllPromotions();
 
-        Map<String, Object> res = new HashMap<>();
-        res.put("data", promotionResponseDtoList);
-        res.put("size", promotionResponseDtoList.size());
+        // res.put("size", promotionResponseDtoList.size());
 
-        return ResponseEntity.ok().body(res);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        ResponseData responseData = new ResponseData();
+        responseData.setStatus(StatusEnum.OK);
+        responseData.setMessage("OK");
+        responseData.setData(promotionResponseDtoList);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(responseData);
     }
 
     @GetMapping("/{id}")
     @ApiOperation(value = "배너 1개 조회")
-    public ResponseEntity<Map<String, Object>> getPromotion(@PathVariable Long id){
+    public ResponseEntity getPromotion(@PathVariable Long id){
+
         PromotionResponseDto promotionResponseDto = promotionService.getPromotion(id);
 
-        if(promotionResponseDto == null) {
+        if (promotionResponseDto == null) {
             return ResponseEntity.notFound().build();
         }
 
-        Map<String, Object> res = new HashMap<>();
-        res.put("data", promotionResponseDto);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        return ResponseEntity.ok().body(res);
+        ResponseData responseData = new ResponseData();
+        responseData.setStatus(StatusEnum.OK);
+        responseData.setMessage("OK");
+        responseData.setData(promotionResponseDto);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(responseData);
     }
 
     @PostMapping("/")
     @ApiOperation(value = "배너 생성")
     public ResponseEntity createPromotion(@RequestBody PromotionRequestDto requestDto){
+
         PromotionResponseDto promotionResponseDto = promotionService.createPromotion(requestDto);
-        return ResponseEntity.ok().body(promotionResponseDto);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        ResponseData responseData = new ResponseData();
+        responseData.setStatus(StatusEnum.OK);
+        responseData.setMessage("OK");
+        responseData.setData(promotionResponseDto);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(responseData);
     }
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "배너 삭제")
-    public ResponseEntity<Map<String, Object>> deletePromotion(@PathVariable Long id){
+    public ResponseEntity deletePromotion(@PathVariable Long id){
+
         Long promotion = promotionService.deletePromotion(id);
 
-        Map<String, Object> res = new HashMap<>();
-        res.put("data", promotion);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        return ResponseEntity.ok().body(res);
+        ResponseData responseData = new ResponseData();
+        responseData.setStatus(StatusEnum.OK);
+        responseData.setMessage("OK");
+        responseData.setData(promotion);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(responseData);
     }
 }

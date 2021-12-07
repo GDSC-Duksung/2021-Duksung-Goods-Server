@@ -1,23 +1,21 @@
 package com.example.duksunggoodsserver.controller;
 
+import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
+import com.example.duksunggoodsserver.config.responseEntity.StatusEnum;
 import com.example.duksunggoodsserver.model.dto.response.MessageResponseDto;
-import com.example.duksunggoodsserver.model.entity.Item;
-import com.example.duksunggoodsserver.model.entity.Message;
 import com.example.duksunggoodsserver.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
+import java.nio.charset.Charset;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,26 +26,38 @@ public class ChatController {
     private final ChatService chatService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getMessagesById(@PathVariable Long id) {
+    public ResponseEntity getMessagesById(@PathVariable Long id) {
 
         List<MessageResponseDto> messageResponseDtoList = chatService.getMessageList(id);
-        Map<String, Object> res = new HashMap<>();
 
-        res.put("result", "SUCCESS");
-        res.put("data", messageResponseDtoList);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        return ResponseEntity.ok().body(res);
+        ResponseData responseData = new ResponseData();
+        responseData.setStatus(StatusEnum.OK);
+        responseData.setMessage("OK");
+        responseData.setData(messageResponseDtoList);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(responseData);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Map<String, Object>> getAllItems() {
+    public ResponseEntity getAllItems() {
 
         List<MessageResponseDto> messageResponseDtoList = chatService.getAllMessages();
-        Map<String, Object> res = new HashMap<>();
 
-        res.put("result", "SUCCESS");
-        res.put("data", messageResponseDtoList);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        return ResponseEntity.ok().body(res);
+        ResponseData responseData = new ResponseData();
+        responseData.setStatus(StatusEnum.OK);
+        responseData.setMessage("OK");
+        responseData.setData(messageResponseDtoList);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(responseData);
     }
 }

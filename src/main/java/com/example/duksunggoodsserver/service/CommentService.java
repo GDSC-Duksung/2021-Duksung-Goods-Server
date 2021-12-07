@@ -48,8 +48,9 @@ public class CommentService {
         return modelMapper.map(newComment, CommentResponseDto.class);
     }
 
-    public void deleteComment(Long id) {
+    public Long deleteComment(Long id) {
         commentRepository.deleteById(id);
+        return id;
     }
 }
 
