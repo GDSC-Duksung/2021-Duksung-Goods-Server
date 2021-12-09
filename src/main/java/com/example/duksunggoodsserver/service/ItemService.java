@@ -31,8 +31,10 @@ public class ItemService {
     public ItemResponseDto getItemDetail(Long id) {
 
         Optional<Item> item = itemRepository.findItemById(id);
-        ItemResponseDto itemResponseDto = modelMapper.map(item, ItemResponseDto.class);
-        return itemResponseDto;
+        if (item.isPresent())
+            return modelMapper.map(item, ItemResponseDto.class);
+        else
+            return null;
     }
 
     public List<ItemResponseDto> getAllItems() {

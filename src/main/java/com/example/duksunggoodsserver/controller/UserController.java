@@ -35,10 +35,9 @@ public class UserController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        ResponseData responseData = new ResponseData();
-        responseData.setStatus(StatusEnum.OK);
-        responseData.setMessage("OK");
-        responseData.setData(buyResponseDtoList);
+        ResponseData responseData = ResponseData.builder()
+                .data(buyResponseDtoList)
+                .build();
 
         return ResponseEntity.ok()
                 .headers(headers)
@@ -54,10 +53,9 @@ public class UserController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        ResponseData responseData = new ResponseData();
-        responseData.setStatus(StatusEnum.OK);
-        responseData.setMessage("OK");
-        responseData.setData(itemResponseDtoList);
+        ResponseData responseData = ResponseData.builder()
+                .data(itemResponseDtoList)
+                .build();
 
         return ResponseEntity.ok()
                 .headers(headers)
@@ -73,10 +71,9 @@ public class UserController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        ResponseData responseData = new ResponseData();
-        responseData.setStatus(StatusEnum.OK);
-        responseData.setMessage("OK");
-        responseData.setData(buyResponseDtoList);
+        ResponseData responseData = ResponseData.builder()
+                .data(buyResponseDtoList)
+                .build();
 
         return ResponseEntity.ok()
                 .headers(headers)

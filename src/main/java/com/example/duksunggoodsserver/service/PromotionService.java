@@ -53,26 +53,35 @@ public class PromotionService {
     public PromotionResponseDto getPromotion(Long id){
 
         Optional<Promotion> promotion = promotionRepository.findById(id);
-        PromotionResponseDto promotionResponseDto = modelMapper.map(promotion.get(), PromotionResponseDto.class);
-        return promotionResponseDto;
+        if (promotion.isPresent())
+            return modelMapper.map(promotion.get(), PromotionResponseDto.class);
+        else
+            return null;
     }
 
     public PromotionResponseDto createPromotion(@RequestBody PromotionRequestDto requestDto){
         Optional<User> user = userRepository.findById(requestDto.getUserId()); // TODO: 로그인 구현 완료시, access_token으로 사용자 찾기
         Optional<Item> item = itemRepository.findById(requestDto.getItemId());
-        Promotion newPromotion = promotionRepository.save(Promotion.builder()
-                .image(requestDto.getImage()) // TODO: S3 연결
-                .content(requestDto.getContent())
-                .startDate(requestDto.getStartDate())
-                .endDate(requestDto.getEndDate())
-                .user(user.get())
-                .item(item.get())
-                .build());
-        return modelMapper.map(newPromotion, PromotionResponseDto.class);
+
+        if (user.isPresent() && item.isPresent()) {
+            Promotion newPromotion = promotionRepository.save(Promotion.builder()
+                    .image(requestDto.getImage()) // TODO: S3 연결
+                    .content(requestDto.getContent())
+                    .startDate(requestDto.getStartDate())
+                    .endDate(requestDto.getEndDate())
+                    .user(user.get())
+                    .item(item.get())
+                    .build());
+            return modelMapper.map(newPromotion, PromotionResponseDto.class);
+        } else
+            return null;
     }
 
     public Long deletePromotion(@PathVariable Long id){
-        promotionRepository.deleteById(id);
-        return id;
+        if (promotionRepository.findById(id).isPresent()) {
+            promotionRepository.deleteById(id);
+            return id;
+        } else
+            return null;
     }
 }

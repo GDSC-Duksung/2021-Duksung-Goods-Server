@@ -1,5 +1,6 @@
 package com.example.duksunggoodsserver.controller;
 
+import com.example.duksunggoodsserver.config.responseEntity.ErrorResponse;
 import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
 import com.example.duksunggoodsserver.config.responseEntity.StatusEnum;
 import com.example.duksunggoodsserver.model.dto.response.ItemResponseDto;
@@ -17,9 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,17 +35,19 @@ public class ItemController {
         ItemResponseDto itemResponseDto = itemService.getItemDetail(id);
 
         if (itemResponseDto == null) {
-            // res.put("reason", "일치하는 제품 정보가 없습니다. 제품 id를 확인해주세요.");
-            return ResponseEntity.notFound().build();
+            ErrorResponse errorResponse = ErrorResponse.builder()
+                    .status(StatusEnum.NOT_FOUND)
+                    .message("id가 null")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        ResponseData responseData = new ResponseData();
-        responseData.setStatus(StatusEnum.OK);
-        responseData.setMessage("OK");
-        responseData.setData(itemResponseDto);
+        ResponseData responseData = ResponseData.builder()
+                .data(itemResponseDto)
+                .build();
 
         return ResponseEntity.ok()
                 .headers(headers)
@@ -62,10 +63,9 @@ public class ItemController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        ResponseData responseData = new ResponseData();
-        responseData.setStatus(StatusEnum.OK);
-        responseData.setMessage("OK");
-        responseData.setData(itemResponseDtoList);
+        ResponseData responseData = ResponseData.builder()
+                .data(itemResponseDtoList)
+                .build();
 
         return ResponseEntity.ok()
                 .headers(headers)

@@ -39,18 +39,25 @@ public class CommentService {
     public CommentResponseDto saveComment(Long id, Map<String, String> comment) {
         Optional<Community> communityId = communityRepository.findById(id);
         Optional<User> userId = userRepository.findById(1L); // TODO: 임시로 해놓음. 추후에 본인 id로 변경
-        Comment newComment = commentRepository.save(Comment.builder()
-                .contents(comment.get("contents"))
-                .community(communityId.get())
-                .createdAt(LocalDateTime.now())
-                .user(userId.get())
-                .build());
-        return modelMapper.map(newComment, CommentResponseDto.class);
+
+        if (communityId.isPresent() && userId.isPresent()) {
+            Comment newComment = commentRepository.save(Comment.builder()
+                    .contents(comment.get("contents"))
+                    .community(communityId.get())
+                    .createdAt(LocalDateTime.now())
+                    .user(userId.get())
+                    .build());
+            return modelMapper.map(newComment, CommentResponseDto.class);
+        } else
+            return null;
     }
 
     public Long deleteComment(Long id) {
-        commentRepository.deleteById(id);
-        return id;
+        if (commentRepository.findById(id).isPresent()) {
+            commentRepository.deleteById(id);
+            return id;
+        } else
+            return null;
     }
 }
 

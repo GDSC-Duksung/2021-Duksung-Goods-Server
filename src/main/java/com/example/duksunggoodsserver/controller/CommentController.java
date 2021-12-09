@@ -1,5 +1,6 @@
 package com.example.duksunggoodsserver.controller;
 
+import com.example.duksunggoodsserver.config.responseEntity.ErrorResponse;
 import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
 import com.example.duksunggoodsserver.config.responseEntity.StatusEnum;
 import com.example.duksunggoodsserver.model.dto.response.CommentResponseDto;
@@ -8,6 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,10 +35,9 @@ public class CommentController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        ResponseData responseData = new ResponseData();
-        responseData.setStatus(StatusEnum.OK);
-        responseData.setMessage("OK");
-        responseData.setData(commentResponseDtoList);
+        ResponseData responseData = ResponseData.builder()
+                .data(commentResponseDtoList)
+                .build();
 
         return ResponseEntity.ok()
                 .headers(headers)
@@ -49,13 +50,20 @@ public class CommentController {
 
         CommentResponseDto commentResponseDto = commentService.saveComment(id, comment);
 
+        if (commentResponseDto == null) {
+            ErrorResponse errorResponse = ErrorResponse.builder()
+                    .status(StatusEnum.NOT_FOUND)
+                    .message("communityId 혹은 userId가 null")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        ResponseData responseData = new ResponseData();
-        responseData.setStatus(StatusEnum.OK);
-        responseData.setMessage("OK");
-        responseData.setData(commentResponseDto);
+        ResponseData responseData = ResponseData.builder()
+                .data(commentResponseDto)
+                .build();
 
         return ResponseEntity.ok()
                 .headers(headers)
@@ -68,13 +76,20 @@ public class CommentController {
 
         Long comment = commentService.deleteComment(id);
 
+        if (comment == null) {
+            ErrorResponse errorResponse = ErrorResponse.builder()
+                    .status(StatusEnum.NOT_FOUND)
+                    .message("id가 null")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        ResponseData responseData = new ResponseData();
-        responseData.setStatus(StatusEnum.OK);
-        responseData.setMessage("OK");
-        responseData.setData(comment);
+        ResponseData responseData = ResponseData.builder()
+                .data(comment)
+                .build();
 
         return ResponseEntity.ok()
                 .headers(headers)

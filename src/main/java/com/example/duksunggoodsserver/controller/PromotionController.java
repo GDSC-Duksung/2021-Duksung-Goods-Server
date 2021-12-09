@@ -1,5 +1,6 @@
 package com.example.duksunggoodsserver.controller;
 
+import com.example.duksunggoodsserver.config.responseEntity.ErrorResponse;
 import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
 import com.example.duksunggoodsserver.config.responseEntity.StatusEnum;
 import com.example.duksunggoodsserver.model.dto.response.PromotionResponseDto;
@@ -9,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,15 +32,12 @@ public class PromotionController {
 
         List<PromotionResponseDto> promotionResponseDtoList = promotionService.getAllPromotions();
 
-        // res.put("size", promotionResponseDtoList.size());
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        ResponseData responseData = new ResponseData();
-        responseData.setStatus(StatusEnum.OK);
-        responseData.setMessage("OK");
-        responseData.setData(promotionResponseDtoList);
+        ResponseData responseData = ResponseData.builder()
+                .data(promotionResponseDtoList)
+                .build();
 
         return ResponseEntity.ok()
                 .headers(headers)
@@ -52,16 +51,19 @@ public class PromotionController {
         PromotionResponseDto promotionResponseDto = promotionService.getPromotion(id);
 
         if (promotionResponseDto == null) {
-            return ResponseEntity.notFound().build();
+            ErrorResponse errorResponse = ErrorResponse.builder()
+                    .status(StatusEnum.NOT_FOUND)
+                    .message("id가 null")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        ResponseData responseData = new ResponseData();
-        responseData.setStatus(StatusEnum.OK);
-        responseData.setMessage("OK");
-        responseData.setData(promotionResponseDto);
+        ResponseData responseData = ResponseData.builder()
+                .data(promotionResponseDto)
+                .build();
 
         return ResponseEntity.ok()
                 .headers(headers)
@@ -74,13 +76,20 @@ public class PromotionController {
 
         PromotionResponseDto promotionResponseDto = promotionService.createPromotion(requestDto);
 
+        if (promotionResponseDto == null) {
+            ErrorResponse errorResponse = ErrorResponse.builder()
+                    .status(StatusEnum.NOT_FOUND)
+                    .message("user 혹은 item이 null")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        ResponseData responseData = new ResponseData();
-        responseData.setStatus(StatusEnum.OK);
-        responseData.setMessage("OK");
-        responseData.setData(promotionResponseDto);
+        ResponseData responseData = ResponseData.builder()
+                .data(promotionResponseDto)
+                .build();
 
         return ResponseEntity.ok()
                 .headers(headers)
@@ -93,13 +102,20 @@ public class PromotionController {
 
         Long promotion = promotionService.deletePromotion(id);
 
+        if (promotion == null) {
+            ErrorResponse errorResponse = ErrorResponse.builder()
+                    .status(StatusEnum.NOT_FOUND)
+                    .message("id가 null")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        ResponseData responseData = new ResponseData();
-        responseData.setStatus(StatusEnum.OK);
-        responseData.setMessage("OK");
-        responseData.setData(promotion);
+        ResponseData responseData = ResponseData.builder()
+                .data(promotion)
+                .build();
 
         return ResponseEntity.ok()
                 .headers(headers)

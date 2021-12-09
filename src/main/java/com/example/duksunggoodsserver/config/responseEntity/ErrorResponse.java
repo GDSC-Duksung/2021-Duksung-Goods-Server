@@ -9,16 +9,13 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @AllArgsConstructor
-public class ResponseData<T> {
+public class ErrorResponse {
 
     @Builder.Default
     private LocalDateTime transactionTime = LocalDateTime.now();
 
     @Builder.Default
-    private StatusEnum status = StatusEnum.OK;
+    private StatusEnum status = StatusEnum.BAD_REQUEST;
 
-    @Builder.Default
-    private String message = "OK";
-
-    private T data;
+    private String message;
 }

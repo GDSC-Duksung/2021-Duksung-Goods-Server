@@ -23,7 +23,11 @@ public class BuyService {
         List<BuyResponseDto> buyResponseDtoList = buyRepository.findAllByUserId(id)
                 .stream().map(buy -> modelMapper.map(buy, BuyResponseDto.class))
                 .collect(Collectors.toList());
-        return buyResponseDtoList;
+
+        if (buyResponseDtoList.isEmpty())
+            return null;
+        else
+            return buyResponseDtoList;
     }
 
     public List<BuyResponseDto> getSellFormList(Long id) {
@@ -31,6 +35,10 @@ public class BuyService {
         List<BuyResponseDto> buyResponseDtoList = buyRepository.findAllByItemId(id)
                 .stream().map(buy -> modelMapper.map(buy, BuyResponseDto.class))
                 .collect(Collectors.toList());
-        return buyResponseDtoList;
+
+        if (buyResponseDtoList.isEmpty())
+            return null;
+        else
+            return buyResponseDtoList;
     }
 }

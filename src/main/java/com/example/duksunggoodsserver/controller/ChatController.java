@@ -33,10 +33,9 @@ public class ChatController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        ResponseData responseData = new ResponseData();
-        responseData.setStatus(StatusEnum.OK);
-        responseData.setMessage("OK");
-        responseData.setData(messageResponseDtoList);
+        ResponseData responseData = ResponseData.builder()
+                .data(messageResponseDtoList)
+                .build();
 
         return ResponseEntity.ok()
                 .headers(headers)
@@ -51,10 +50,9 @@ public class ChatController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        ResponseData responseData = new ResponseData();
-        responseData.setStatus(StatusEnum.OK);
-        responseData.setMessage("OK");
-        responseData.setData(messageResponseDtoList);
+        ResponseData responseData = ResponseData.builder()
+                .data(messageResponseDtoList)
+                .build();
 
         return ResponseEntity.ok()
                 .headers(headers)
