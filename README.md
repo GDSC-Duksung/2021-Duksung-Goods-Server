@@ -16,3 +16,6 @@ Test: 테스트 코드 수정에 대한 커밋
 ### application.properties
 
 [DB_SCHEMA], [DB_ID], [DB_PW] 각자 셋팅
+
+## ERD
+![erd](https://user-images.githubusercontent.com/43838022/145366345-080440ca-c81f-44c7-9652-34e294ac50b5.png)
