@@ -32,7 +32,7 @@ public class ItemService {
 
         Optional<Item> item = itemRepository.findItemById(id);
         if (item.isPresent())
-            return modelMapper.map(item, ItemResponseDto.class);
+            return modelMapper.map(item.get(), ItemResponseDto.class);
         else
             return null;
     }

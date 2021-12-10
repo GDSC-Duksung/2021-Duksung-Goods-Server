@@ -3,19 +3,16 @@ package com.example.duksunggoodsserver.controller;
 import com.example.duksunggoodsserver.config.responseEntity.ErrorResponse;
 import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
 import com.example.duksunggoodsserver.config.responseEntity.StatusEnum;
-import com.example.duksunggoodsserver.model.dto.response.PromotionResponseDto;
 import com.example.duksunggoodsserver.model.dto.request.PromotionRequestDto;
+import com.example.duksunggoodsserver.model.dto.response.PromotionResponseDto;
 import com.example.duksunggoodsserver.service.PromotionService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.Charset;
 import java.util.List;
 
 @Slf4j
@@ -32,15 +29,11 @@ public class PromotionController {
 
         List<PromotionResponseDto> promotionResponseDtoList = promotionService.getAllPromotions();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
         ResponseData responseData = ResponseData.builder()
                 .data(promotionResponseDtoList)
                 .build();
 
         return ResponseEntity.ok()
-                .headers(headers)
                 .body(responseData);
     }
 
@@ -58,15 +51,11 @@ public class PromotionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
         ResponseData responseData = ResponseData.builder()
                 .data(promotionResponseDto)
                 .build();
 
         return ResponseEntity.ok()
-                .headers(headers)
                 .body(responseData);
     }
 
@@ -84,15 +73,11 @@ public class PromotionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
         ResponseData responseData = ResponseData.builder()
                 .data(promotionResponseDto)
                 .build();
 
         return ResponseEntity.ok()
-                .headers(headers)
                 .body(responseData);
     }
 
@@ -110,15 +95,11 @@ public class PromotionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
         ResponseData responseData = ResponseData.builder()
                 .data(promotion)
                 .build();
 
         return ResponseEntity.ok()
-                .headers(headers)
                 .body(responseData);
     }
 }

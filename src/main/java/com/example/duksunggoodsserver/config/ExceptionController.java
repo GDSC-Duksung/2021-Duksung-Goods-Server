@@ -21,7 +21,7 @@ public class ExceptionController {
         log.warn("error", e);
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .message(e.getMessage())
-                .build();;
+                .build();
         return ResponseEntity.badRequest()
                 .body(errorResponse);
     }
