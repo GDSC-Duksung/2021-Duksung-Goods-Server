@@ -1,5 +1,6 @@
 package com.example.duksunggoodsserver.service;
 
+import com.example.duksunggoodsserver.exception.ResourceNotFoundException;
 import com.example.duksunggoodsserver.model.dto.request.CommunityRequestDto;
 import com.example.duksunggoodsserver.model.dto.response.CommunityResponseDto;
 import com.example.duksunggoodsserver.model.entity.Community;
@@ -39,22 +40,22 @@ public class CommunityService {
 
     @Transactional
     public CommunityResponseDto saveCommunity(Long id, CommunityRequestDto communityRequestDto) {
-        Optional<Item> itemId = itemRepository.findById(id);
-        Optional<User> userId = userRepository.findById(1L); // TODO: 임시로 해놓음. 추후에 본인 id로 변경
+        Optional<Item> itemId = Optional.ofNullable(itemRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("item", "itemId", id)));
+        Optional<User> userId = Optional.ofNullable(userRepository.findById(1L)
+                .orElseThrow(() -> new ResourceNotFoundException("user", "userId", 1L))); // TODO: 임시로 해놓음. 추후에 본인 id로 변경
 
-        if (itemId.isPresent() && userId.isPresent()) {
-            Community newCommunity = communityRepository.save(communityRequestDto.toCommunityEntity(itemId.get(), userId.get()));
-            return modelMapper.map(newCommunity, CommunityResponseDto.class);
-        } else
-            return null;
+        Community newCommunity = communityRepository.save(communityRequestDto.toCommunityEntity(itemId.get(), userId.get()));
+        return modelMapper.map(newCommunity, CommunityResponseDto.class);
     }
 
     @Transactional
     public Long deleteCommunity(Long id) {
-        if (communityRepository.findById(id).isPresent()) {
-            communityRepository.deleteById(id);
-            return id;
-        } else
-            return null;
+
+        Optional.ofNullable(communityRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("community", "communityId", id)));
+
+        communityRepository.deleteById(id);
+        return id;
     }
 }

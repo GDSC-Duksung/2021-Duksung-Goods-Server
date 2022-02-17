@@ -1,10 +1,11 @@
-package com.example.duksunggoodsserver.config;
+package com.example.duksunggoodsserver.exception;
 
 import com.example.duksunggoodsserver.config.responseEntity.ErrorResponse;
 import com.example.duksunggoodsserver.config.responseEntity.StatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,7 +18,7 @@ public class ExceptionController {
 
     // 400
     @ExceptionHandler({ RuntimeException.class })
-    public ResponseEntity BadRequestException(final RuntimeException e) {
+    public ResponseEntity badRequestException(final RuntimeException e) {
         log.warn("error", e);
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .message(e.getMessage())
@@ -27,10 +28,19 @@ public class ExceptionController {
     }
 
     @ExceptionHandler({ MethodArgumentNotValidException.class })
-    public ResponseEntity MethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+    public ResponseEntity methodArgumentNotValidException(final MethodArgumentNotValidException e) {
         log.warn("error", e);
+
+        StringBuilder message = new StringBuilder();
+        for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
+            message.append("[");
+            message.append(fieldError.getField());
+            message.append("]에 ");
+            message.append(fieldError.getDefaultMessage());
+        }
+
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .message(e.getMessage())
+                .message(message.toString())
                 .build();
         return ResponseEntity.badRequest()
                 .body(errorResponse);

@@ -4,20 +4,19 @@ import com.example.duksunggoodsserver.model.entity.Community;
 import com.example.duksunggoodsserver.model.entity.Item;
 import com.example.duksunggoodsserver.model.entity.User;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class CommunityRequestDto {
 
-    @NotBlank
+    @NotBlank(message = "내용을 입력해주세요.")
     private String contents;
 
-    private LocalDateTime createdAt = LocalDateTime.now();;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public Community toCommunityEntity(Item item, User user) {
         return Community.builder()

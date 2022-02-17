@@ -1,15 +1,12 @@
 package com.example.duksunggoodsserver.controller;
 
-import com.example.duksunggoodsserver.config.responseEntity.ErrorResponse;
 import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
-import com.example.duksunggoodsserver.config.responseEntity.StatusEnum;
 import com.example.duksunggoodsserver.model.dto.request.CommunityRequestDto;
 import com.example.duksunggoodsserver.model.dto.response.CommunityResponseDto;
 import com.example.duksunggoodsserver.service.CommunityService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,18 +36,9 @@ public class CommunityController {
 
     @PostMapping("/{itemId}/community")
     @ApiOperation(value = "커뮤니티 생성")
-    public ResponseEntity postCommunity(@PathVariable Long itemId, @Valid @RequestBody CommunityRequestDto community) {
+    public ResponseEntity postCommunity(@PathVariable Long itemId, @Valid @RequestBody CommunityRequestDto communityRequestDto) {
 
-        CommunityResponseDto communityResponseDto = communityService.saveCommunity(itemId, community);
-
-        if (communityResponseDto == null) {
-            ErrorResponse errorResponse = ErrorResponse.builder()
-                    .status(StatusEnum.NOT_FOUND)
-                    .message("itemId 혹은 userId가 null")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }
-
+        CommunityResponseDto communityResponseDto = communityService.saveCommunity(itemId, communityRequestDto);
         log.info("Succeeded in posting community of item : viewer {} => {}", 1, communityResponseDto);
         ResponseData responseData = ResponseData.builder()
                 .data(communityResponseDto)
@@ -65,15 +53,6 @@ public class CommunityController {
     public ResponseEntity deleteComment(@PathVariable Long id) {
 
         Long community = communityService.deleteCommunity(id);
-
-        if (community == null) {
-            ErrorResponse errorResponse = ErrorResponse.builder()
-                    .status(StatusEnum.NOT_FOUND)
-                    .message("id가 null")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }
-
         log.info("Succeeded in deleting community of item : viewer {} => {}", 1, community);
         ResponseData responseData = ResponseData.builder()
                 .data(community)
