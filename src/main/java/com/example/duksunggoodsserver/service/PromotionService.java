@@ -1,5 +1,6 @@
 package com.example.duksunggoodsserver.service;
 
+import com.example.duksunggoodsserver.exception.ResourceNotFoundException;
 import com.example.duksunggoodsserver.model.dto.response.PromotionResponseDto;
 import com.example.duksunggoodsserver.model.entity.Item;
 import com.example.duksunggoodsserver.model.entity.Promotion;
@@ -12,9 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +30,7 @@ public class PromotionService {
     private final ItemRepository itemRepository;
     private final ModelMapper modelMapper;
 
+    @Transactional
     public List<PromotionResponseDto> getAllPromotions(){
 
         List<PromotionResponseDto> promotionResponseDtoList = promotionRepository.findAll()
@@ -50,38 +51,31 @@ public class PromotionService {
         // TODO: endDate 끝나면 삭제
     }
 
+    @Transactional
     public PromotionResponseDto getPromotion(Long id){
-
-        Optional<Promotion> promotion = promotionRepository.findById(id);
-        if (promotion.isPresent())
-            return modelMapper.map(promotion.get(), PromotionResponseDto.class);
-        else
-            return null;
+        Optional<Promotion> promotion = Optional.ofNullable(promotionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("promotion", "promotionId", id)));
+        return modelMapper.map(promotion.get(), PromotionResponseDto.class);
     }
 
-    public PromotionResponseDto createPromotion(@RequestBody PromotionRequestDto requestDto){
-        Optional<User> user = userRepository.findById(requestDto.getUserId()); // TODO: 로그인 구현 완료시, access_token으로 사용자 찾기
-        Optional<Item> item = itemRepository.findById(requestDto.getItemId());
+    @Transactional
+    public PromotionResponseDto createPromotion(Long id, PromotionRequestDto promotionRequestDto){
+        Optional<Item> item = Optional.ofNullable(itemRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("item", "itemId", id)));
+        Optional<User> user = Optional.ofNullable(userRepository.findById(1L)
+                .orElseThrow(() -> new ResourceNotFoundException("user", "userId", 1L))); // TODO: 임시로 해놓음. 추후에 본인 id로 변경 (로그인 구현 완료시, access_token으로 사용자 찾기)
 
-        if (user.isPresent() && item.isPresent()) {
-            Promotion newPromotion = promotionRepository.save(Promotion.builder()
-                    .image(requestDto.getImage()) // TODO: S3 연결
-                    .content(requestDto.getContent())
-                    .startDate(requestDto.getStartDate())
-                    .endDate(requestDto.getEndDate())
-                    .user(user.get())
-                    .item(item.get())
-                    .build());
-            return modelMapper.map(newPromotion, PromotionResponseDto.class);
-        } else
-            return null;
+        Promotion newPromotion = promotionRepository.save(promotionRequestDto.toPromotionEntity(item.get(), user.get()));
+        return modelMapper.map(newPromotion, PromotionResponseDto.class);
     }
 
-    public Long deletePromotion(@PathVariable Long id){
-        if (promotionRepository.findById(id).isPresent()) {
-            promotionRepository.deleteById(id);
-            return id;
-        } else
-            return null;
+    @Transactional
+    public Long deletePromotion(Long id){
+
+        Optional.ofNullable(promotionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("promotion", "promotionId", id)));
+
+        promotionRepository.deleteById(id);
+        return id;
     }
 }

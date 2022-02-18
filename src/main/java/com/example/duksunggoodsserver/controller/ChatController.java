@@ -25,7 +25,7 @@ public class ChatController {
     public ResponseEntity getMessagesById(@PathVariable Long id) {
 
         List<MessageResponseDto> messageResponseDtoList = chatService.getMessageList(id);
-
+        log.info("Succeeded in getting messages : viewer {} => {}", 1, messageResponseDtoList);
         ResponseData responseData = ResponseData.builder()
                 .data(messageResponseDtoList)
                 .build();
@@ -38,7 +38,7 @@ public class ChatController {
     public ResponseEntity getAllItems() {
 
         List<MessageResponseDto> messageResponseDtoList = chatService.getAllMessages();
-
+        log.info("Succeeded in getting all messages : viewer {} => {}", 1, messageResponseDtoList);
         ResponseData responseData = ResponseData.builder()
                 .data(messageResponseDtoList)
                 .build();

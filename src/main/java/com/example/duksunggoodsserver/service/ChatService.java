@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,7 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ModelMapper modelMapper;
 
+    @Transactional
     public List<MessageResponseDto> getMessageList(Long id) {
 
         List<MessageResponseDto> messageResponseDtoList = chatRepository.findAllByUserId(id)
@@ -26,6 +28,7 @@ public class ChatService {
         return messageResponseDtoList;
     }
 
+    @Transactional
     public List<MessageResponseDto> getAllMessages() {
 
         List<MessageResponseDto> messageResponseDtoList = chatRepository.findAll()

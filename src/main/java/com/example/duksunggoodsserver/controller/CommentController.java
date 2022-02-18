@@ -1,19 +1,17 @@
 package com.example.duksunggoodsserver.controller;
 
-import com.example.duksunggoodsserver.config.responseEntity.ErrorResponse;
 import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
-import com.example.duksunggoodsserver.config.responseEntity.StatusEnum;
+import com.example.duksunggoodsserver.model.dto.request.CommentRequestDto;
 import com.example.duksunggoodsserver.model.dto.response.CommentResponseDto;
 import com.example.duksunggoodsserver.service.CommentService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,7 +26,7 @@ public class CommentController {
     public ResponseEntity getCommentList(@PathVariable Long id) {
 
         List<CommentResponseDto> commentResponseDtoList = commentService.getCommentList(id);
-
+        log.info("Succeeded in getting comments of community : viewer {} => {}", 1, commentResponseDtoList);
         ResponseData responseData = ResponseData.builder()
                 .data(commentResponseDtoList)
                 .build();
@@ -39,18 +37,10 @@ public class CommentController {
 
     @PostMapping("/{id}/comment")
     @ApiOperation(value = "댓글 생성")
-    public ResponseEntity postComment(@PathVariable Long id, @RequestBody Map<String, String> comment) {
+    public ResponseEntity postComment(@PathVariable Long id, @Valid @RequestBody CommentRequestDto commentRequestDto) {
 
-        CommentResponseDto commentResponseDto = commentService.saveComment(id, comment);
-
-        if (commentResponseDto == null) {
-            ErrorResponse errorResponse = ErrorResponse.builder()
-                    .status(StatusEnum.NOT_FOUND)
-                    .message("communityId 혹은 userId가 null")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }
-
+        CommentResponseDto commentResponseDto = commentService.saveComment(id, commentRequestDto);
+        log.info("Succeeded in posting comment of community : viewer {} => {}", 1, commentResponseDto);
         ResponseData responseData = ResponseData.builder()
                 .data(commentResponseDto)
                 .build();
@@ -64,15 +54,7 @@ public class CommentController {
     public ResponseEntity deleteComment(@PathVariable Long id) {
 
         Long comment = commentService.deleteComment(id);
-
-        if (comment == null) {
-            ErrorResponse errorResponse = ErrorResponse.builder()
-                    .status(StatusEnum.NOT_FOUND)
-                    .message("id가 null")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }
-
+        log.info("Succeeded in deleting comment of community : viewer {} => {}", 1, comment);
         ResponseData responseData = ResponseData.builder()
                 .data(comment)
                 .build();

@@ -30,7 +30,7 @@ public class UserController {
     public ResponseEntity getBuyList(@PathVariable Long id) {
 
         List<BuyResponseDto> buyResponseDtoList = buyService.getBuyList(id);
-
+        log.info("Succeeded in getting buyList of item : viewer {} => {}", 1, buyResponseDtoList);
         ResponseData responseData = ResponseData.builder()
                 .data(buyResponseDtoList)
                 .build();
@@ -44,7 +44,7 @@ public class UserController {
     public ResponseEntity getSellList(@PathVariable Long id) {
 
         List<ItemResponseDto> itemResponseDtoList = itemService.getItemList(id);
-
+        log.info("Succeeded in getting sellList of item : viewer {} => {}", 1, itemResponseDtoList);
         ResponseData responseData = ResponseData.builder()
                 .data(itemResponseDtoList)
                 .build();
@@ -58,7 +58,7 @@ public class UserController {
     public ResponseEntity getSellFormList(@PathVariable Long id, @PathVariable Long itemId) {
 
         List<BuyResponseDto> buyResponseDtoList = buyService.getSellFormList(itemId);
-
+        log.info("Succeeded in getting depositors of item : viewer {} => {}", 1, buyResponseDtoList);
         ResponseData responseData = ResponseData.builder()
                 .data(buyResponseDtoList)
                 .build();

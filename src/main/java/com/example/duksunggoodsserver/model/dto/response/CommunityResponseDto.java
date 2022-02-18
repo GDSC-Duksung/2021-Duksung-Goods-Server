@@ -15,8 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-@JsonIdentityReference(alwaysAsId = true) // 직렬화시 id로만 출력 // TODO 모든 내용 나올 수 있도록
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+//@JsonIdentityReference(alwaysAsId = true) // 직렬화시 id로만 출력 // TODO 모든 내용 나올 수 있도록
 public class CommunityResponseDto {
 
     private Long id;

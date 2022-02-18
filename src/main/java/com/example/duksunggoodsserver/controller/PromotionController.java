@@ -1,18 +1,16 @@
 package com.example.duksunggoodsserver.controller;
 
-import com.example.duksunggoodsserver.config.responseEntity.ErrorResponse;
 import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
-import com.example.duksunggoodsserver.config.responseEntity.StatusEnum;
 import com.example.duksunggoodsserver.model.dto.request.PromotionRequestDto;
 import com.example.duksunggoodsserver.model.dto.response.PromotionResponseDto;
 import com.example.duksunggoodsserver.service.PromotionService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -28,7 +26,7 @@ public class PromotionController {
     public ResponseEntity getAllPromotions(){
 
         List<PromotionResponseDto> promotionResponseDtoList = promotionService.getAllPromotions();
-
+        log.info("Succeeded in getting all promotions : viewer {} => {}", 1, promotionResponseDtoList);
         ResponseData responseData = ResponseData.builder()
                 .data(promotionResponseDtoList)
                 .build();
@@ -42,15 +40,7 @@ public class PromotionController {
     public ResponseEntity getPromotion(@PathVariable Long id){
 
         PromotionResponseDto promotionResponseDto = promotionService.getPromotion(id);
-
-        if (promotionResponseDto == null) {
-            ErrorResponse errorResponse = ErrorResponse.builder()
-                    .status(StatusEnum.NOT_FOUND)
-                    .message("id가 null")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }
-
+        log.info("Succeeded in getting promotion : viewer {} => {}", 1, promotionResponseDto);
         ResponseData responseData = ResponseData.builder()
                 .data(promotionResponseDto)
                 .build();
@@ -59,20 +49,12 @@ public class PromotionController {
                 .body(responseData);
     }
 
-    @PostMapping("/")
+    @PostMapping("/{id}")
     @ApiOperation(value = "배너 생성")
-    public ResponseEntity createPromotion(@RequestBody PromotionRequestDto requestDto){
+    public ResponseEntity createPromotion(@PathVariable Long id, @Valid @RequestBody PromotionRequestDto promotionRequestDto){
 
-        PromotionResponseDto promotionResponseDto = promotionService.createPromotion(requestDto);
-
-        if (promotionResponseDto == null) {
-            ErrorResponse errorResponse = ErrorResponse.builder()
-                    .status(StatusEnum.NOT_FOUND)
-                    .message("user 혹은 item이 null")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }
-
+        PromotionResponseDto promotionResponseDto = promotionService.createPromotion(id, promotionRequestDto);
+        log.info("Succeeded in posting promotion : viewer {} => {}", 1, promotionResponseDto);
         ResponseData responseData = ResponseData.builder()
                 .data(promotionResponseDto)
                 .build();
@@ -86,15 +68,7 @@ public class PromotionController {
     public ResponseEntity deletePromotion(@PathVariable Long id){
 
         Long promotion = promotionService.deletePromotion(id);
-
-        if (promotion == null) {
-            ErrorResponse errorResponse = ErrorResponse.builder()
-                    .status(StatusEnum.NOT_FOUND)
-                    .message("id가 null")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }
-
+        log.info("Succeeded in deleting promotion : viewer {} => {}", 1, promotion);
         ResponseData responseData = ResponseData.builder()
                 .data(promotion)
                 .build();

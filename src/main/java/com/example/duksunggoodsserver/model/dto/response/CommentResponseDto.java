@@ -19,7 +19,5 @@ public class CommentResponseDto {
 
     private LocalDateTime createdAt;
 
-    private CommunityResponseDto community;
-
     private UserResponseDto user;
 }
