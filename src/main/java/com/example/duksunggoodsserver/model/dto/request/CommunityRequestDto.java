@@ -3,6 +3,8 @@ package com.example.duksunggoodsserver.model.dto.request;
 import com.example.duksunggoodsserver.model.entity.Community;
 import com.example.duksunggoodsserver.model.entity.Item;
 import com.example.duksunggoodsserver.model.entity.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +13,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CommunityRequestDto {
 
     @NotBlank(message = "내용을 입력해주세요.")
