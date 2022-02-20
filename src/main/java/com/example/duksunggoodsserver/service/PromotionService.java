@@ -29,6 +29,7 @@ public class PromotionService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final ModelMapper modelMapper;
+    private final S3Service s3Service;
 
     @Transactional
     public List<PromotionResponseDto> getAllPromotions(){
@@ -72,9 +73,9 @@ public class PromotionService {
     @Transactional
     public Long deletePromotion(Long id){
 
-        Optional.ofNullable(promotionRepository.findById(id)
+        Optional<Promotion> promotion = Optional.ofNullable(promotionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("promotion", "promotionId", id)));
-
+        s3Service.deleteFileInBucket(promotion.get().getImage());
         promotionRepository.deleteById(id);
         return id;
     }

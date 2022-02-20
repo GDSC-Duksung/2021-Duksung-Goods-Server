@@ -4,13 +4,16 @@ import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
 import com.example.duksunggoodsserver.model.dto.request.PromotionRequestDto;
 import com.example.duksunggoodsserver.model.dto.response.PromotionResponseDto;
 import com.example.duksunggoodsserver.service.PromotionService;
+import com.example.duksunggoodsserver.service.S3Service;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -20,6 +23,7 @@ import java.util.List;
 public class PromotionController {
 
     private final PromotionService promotionService;
+    private final S3Service s3Service;
 
     @GetMapping("/")
     @ApiOperation(value = "모든 배너 조회")
@@ -51,7 +55,12 @@ public class PromotionController {
 
     @PostMapping("/{id}")
     @ApiOperation(value = "배너 생성")
-    public ResponseEntity createPromotion(@PathVariable Long id, @Valid @RequestBody PromotionRequestDto promotionRequestDto){
+    public ResponseEntity createPromotion(@PathVariable Long id, MultipartFile file, @Valid PromotionRequestDto promotionRequestDto) throws IOException {
+
+        if (file != null) {
+            String imgPath = s3Service.uploadFile(file);
+            promotionRequestDto.setImage(imgPath);
+        }
 
         PromotionResponseDto promotionResponseDto = promotionService.createPromotion(id, promotionRequestDto);
         log.info("Succeeded in posting promotion : viewer {} => {}", 1, promotionResponseDto);

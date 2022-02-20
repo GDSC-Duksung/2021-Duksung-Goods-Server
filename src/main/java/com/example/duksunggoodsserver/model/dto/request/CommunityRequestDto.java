@@ -20,6 +20,7 @@ public class CommunityRequestDto {
     @NotBlank(message = "내용을 입력해주세요.")
     private String contents;
 
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public Community toCommunityEntity(Item item, User user) {
