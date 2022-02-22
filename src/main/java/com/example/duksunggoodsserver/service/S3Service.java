@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,7 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @NoArgsConstructor
@@ -47,15 +49,18 @@ public class S3Service {
 
     @Transactional
     public String uploadFile(MultipartFile file) throws IOException { // TODO 여러장 업로드
-        String fileName = LocalDateTime.now() + "_" + file.getOriginalFilename(); // TODO 파일 이름에 유저 이름 추가
-
-        s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
+        String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HHmmss"))
+                + "_" + file.getOriginalFilename(); // TODO 파일 이름에 유저 이름 추가
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(file.getContentType());
+        s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), objectMetadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
         return s3Client.getUrl(bucket, fileName).toString();
     }
 
     @Transactional
-    public void deleteFileInBucket(String fileName) {
+    public void deleteFileInBucket(String imageURL) {
+        String fileName = imageURL.replace("https://"+this.bucket+".s3."+this.region+".amazonaws.com/", "");
         DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(this.bucket, fileName);
         s3Client.deleteObject(deleteObjectRequest);
     }
