@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -20,8 +21,6 @@ public class ItemResponseDto {
     private String title;
 
     private String description;
-
-    private String image;
 
     private Integer price;
 
@@ -40,4 +39,6 @@ public class ItemResponseDto {
     private Category category;
 
     private DemandSurveyType demandSurveyType;
+
+    private List<ImageResponseDto> imageList;
 }

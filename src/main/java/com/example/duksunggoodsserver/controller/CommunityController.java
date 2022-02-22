@@ -50,7 +50,7 @@ public class CommunityController {
 
     @DeleteMapping("/community/{id}")
     @ApiOperation(value = "커뮤니티 삭제")
-    public ResponseEntity deleteComment(@PathVariable Long id) {
+    public ResponseEntity deleteCommunity(@PathVariable Long id) {
 
         Long community = communityService.deleteCommunity(id);
         log.info("Succeeded in deleting community of item : viewer {} => {}", 1, community);

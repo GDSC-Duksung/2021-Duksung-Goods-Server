@@ -10,6 +10,7 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,9 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Slf4j
 @Service
 @NoArgsConstructor
 public class S3Service {
@@ -48,7 +52,7 @@ public class S3Service {
     }
 
     @Transactional
-    public String uploadFile(MultipartFile file) throws IOException { // TODO 여러장 업로드
+    public String uploadFile(MultipartFile file) throws IOException {
         String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HHmmss"))
                 + "_" + file.getOriginalFilename(); // TODO 파일 이름에 유저 이름 추가
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -59,9 +63,10 @@ public class S3Service {
     }
 
     @Transactional
-    public void deleteFileInBucket(String imageURL) {
+    public void deleteFileInBucket(String imageURL) throws UnsupportedEncodingException {
         String fileName = imageURL.replace("https://"+this.bucket+".s3."+this.region+".amazonaws.com/", "");
-        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(this.bucket, fileName);
+        String decodedFileName = URLDecoder.decode(fileName, "UTF-8");
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(this.bucket, decodedFileName);
         s3Client.deleteObject(deleteObjectRequest);
     }
 }

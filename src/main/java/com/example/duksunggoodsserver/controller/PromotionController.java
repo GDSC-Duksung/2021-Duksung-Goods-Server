@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @Slf4j
@@ -74,7 +75,7 @@ public class PromotionController {
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "배너 삭제")
-    public ResponseEntity deletePromotion(@PathVariable Long id){
+    public ResponseEntity deletePromotion(@PathVariable Long id) throws UnsupportedEncodingException {
 
         Long promotion = promotionService.deletePromotion(id);
         log.info("Succeeded in deleting promotion : viewer {} => {}", 1, promotion);

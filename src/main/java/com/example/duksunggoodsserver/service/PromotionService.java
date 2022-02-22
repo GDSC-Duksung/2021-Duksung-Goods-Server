@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -71,7 +72,7 @@ public class PromotionService {
     }
 
     @Transactional
-    public Long deletePromotion(Long id){
+    public Long deletePromotion(Long id) throws UnsupportedEncodingException {
 
         Optional<Promotion> promotion = Optional.ofNullable(promotionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("promotion", "promotionId", id)));
