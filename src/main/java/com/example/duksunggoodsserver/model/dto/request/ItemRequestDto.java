@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 @Getter
@@ -19,7 +20,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ItemRequestDto {
 
-    @NotNull
+    @NotBlank(message = "제목을 입력해주세요.")
     private String title;
 
     @NotNull

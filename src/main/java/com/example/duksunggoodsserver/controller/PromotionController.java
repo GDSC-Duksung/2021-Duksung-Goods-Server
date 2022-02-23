@@ -56,7 +56,7 @@ public class PromotionController {
 
     @PostMapping("/{id}")
     @ApiOperation(value = "배너 생성")
-    public ResponseEntity createPromotion(@PathVariable Long id, MultipartFile file, @Valid PromotionRequestDto promotionRequestDto) throws IOException {
+    public ResponseEntity createPromotion(@PathVariable Long id, @RequestPart MultipartFile file, @Valid @RequestPart PromotionRequestDto promotionRequestDto) throws IOException {
 
         if (file != null) {
             String imgPath = s3Service.uploadFile(file);

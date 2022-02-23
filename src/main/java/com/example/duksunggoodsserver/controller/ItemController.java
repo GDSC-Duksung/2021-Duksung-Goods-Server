@@ -1,9 +1,7 @@
 package com.example.duksunggoodsserver.controller;
 
 import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
-import com.example.duksunggoodsserver.model.dto.request.ImageRequestDto;
 import com.example.duksunggoodsserver.model.dto.request.ItemRequestDto;
-import com.example.duksunggoodsserver.model.dto.response.ImageResponseDto;
 import com.example.duksunggoodsserver.model.dto.response.ItemResponseDto;
 import com.example.duksunggoodsserver.service.ItemService;
 import com.example.duksunggoodsserver.service.S3Service;
@@ -58,7 +56,7 @@ public class ItemController {
 
     @PostMapping("")
     @ApiOperation(value = "굿즈 생성")
-    public ResponseEntity postItem(List<MultipartFile> files, @Valid ItemRequestDto itemRequestDto) throws IOException {
+    public ResponseEntity postItem(@RequestPart(required = false) List<MultipartFile> files, @Valid @RequestPart ItemRequestDto itemRequestDto) throws IOException {
 
         ItemResponseDto itemResponseDto = itemService.createItem(files, itemRequestDto);
         log.info("Succeeded in posting item : viewer {} => {}", 1, itemResponseDto);
