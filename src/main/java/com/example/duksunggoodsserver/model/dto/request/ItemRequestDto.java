@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
@@ -26,11 +28,13 @@ public class ItemRequestDto {
     @NotNull
     private String description;
 
-    @NotNull
+    @Min(0)
     private Integer price;
 
+    @Min(1)
     private Integer minNumber;
 
+    @Min(1)
     private Integer maxNumber;
 
     @NotNull
@@ -43,8 +47,12 @@ public class ItemRequestDto {
 
     private Boolean progress;
 
+    @Min(1)
+    @Max(4)
     private Long categoryId;
 
+    @Min(1)
+    @Max(2)
     private Long demandSurveyTypeId;
 
     public Item toItemEntity(User user, Category category, DemandSurveyType demandSurveyType) {
