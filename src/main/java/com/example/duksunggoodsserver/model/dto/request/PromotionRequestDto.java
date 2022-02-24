@@ -1,24 +1,40 @@
 package com.example.duksunggoodsserver.model.dto.request;
 
+import com.example.duksunggoodsserver.model.entity.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class PromotionRequestDto {
 
     private String image;
 
+    @NotBlank(message = "내용을 입력해주세요.")
     private String content;
 
-    private LocalDateTime startDate;
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate startDate;
 
-    private LocalDateTime endDate;
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate endDate;
 
-    private Long userId;
-
-    private Long itemId;
+    public Promotion toPromotionEntity(Item item, User user) {
+        return Promotion.builder()
+                .item(item)
+                .image(this.image)
+                .content(this.content)
+                .startDate(this.startDate)
+                .endDate(this.endDate)
+                .user(user)
+                .build();
+    }
 }

@@ -6,8 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -21,17 +23,17 @@ public class ItemResponseDto {
 
     private String description;
 
-    private String image;
-
     private Integer price;
 
     private Integer minNumber;
 
     private Integer maxNumber;
 
-    private LocalDateTime startDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate startDate;
 
-    private LocalDateTime endDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate endDate;
 
     private Boolean progress;
 
@@ -40,4 +42,6 @@ public class ItemResponseDto {
     private Category category;
 
     private DemandSurveyType demandSurveyType;
+
+    private List<ImageResponseDto> imageList;
 }

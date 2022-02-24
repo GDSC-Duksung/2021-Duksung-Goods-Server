@@ -1,12 +1,12 @@
 package com.example.duksunggoodsserver.repository;
 
-import com.example.duksunggoodsserver.model.entity.Community;
+import com.example.duksunggoodsserver.model.entity.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface CommunityRepository extends JpaRepository<Community, Long> {
-    List<Community> findAllByItemId(Long id);
+public interface ImageRepository extends JpaRepository<Image, Long> {
+    List<Image> findAllByItemId(Long id);
 }

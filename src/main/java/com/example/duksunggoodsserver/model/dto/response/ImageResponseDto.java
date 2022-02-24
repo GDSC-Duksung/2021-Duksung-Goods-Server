@@ -5,19 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CommentResponseDto {
+public class ImageResponseDto {
 
-    private Long id;
+    private String url;
 
-    private String contents;
-
-    private LocalDateTime createdAt;
-
-    private UserResponseDto user;
 }
