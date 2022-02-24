@@ -28,18 +28,11 @@ public class BuyService {
     private final ModelMapper modelMapper;
 
     @Transactional
-    public List<BuyResponseDto> getBuyList(Long id) {
+    public List<BuyResponseDto> getBuyList() {
+        Optional<User> user = Optional.ofNullable(userRepository.findById(1L)
+                .orElseThrow(() -> new ResourceNotFoundException("user", "userId", 1L))); // TODO: 임시로 해놓음. 추후에 본인 id로 변경
 
-        List<BuyResponseDto> buyResponseDtoList = buyRepository.findAllByUserId(id)
-                .stream().map(buy -> modelMapper.map(buy, BuyResponseDto.class))
-                .collect(Collectors.toList());
-        return buyResponseDtoList;
-    }
-
-    @Transactional
-    public List<BuyResponseDto> getSellFormList(Long id) {
-
-        List<BuyResponseDto> buyResponseDtoList = buyRepository.findAllByItemId(id)
+        List<BuyResponseDto> buyResponseDtoList = buyRepository.findAllByUserId(user.get().getId())
                 .stream().map(buy -> modelMapper.map(buy, BuyResponseDto.class))
                 .collect(Collectors.toList());
         return buyResponseDtoList;
@@ -63,5 +56,31 @@ public class BuyService {
 
         buyRepository.deleteById(buyId);
         return buyId;
+    }
+
+    @Transactional
+    public List<BuyResponseDto> getDepositList(Long itemId) {
+
+        List<BuyResponseDto> buyResponseDtoList = buyRepository.findAllByItemId(itemId)
+                .stream().map(buy -> modelMapper.map(buy, BuyResponseDto.class))
+                .collect(Collectors.toList());
+        return buyResponseDtoList;
+    }
+
+    @Transactional
+    public boolean changeDeposit(Long buyId) {
+
+        Optional<Buy> buy = Optional.ofNullable(buyRepository.findById(buyId)
+                .orElseThrow(() -> new ResourceNotFoundException("buy", "buyId", buyId)));
+        Optional<User> user = Optional.ofNullable(userRepository.findById(1L)
+                .orElseThrow(() -> new ResourceNotFoundException("user", "userId", 1L))); // TODO: 임시로 해놓음. 추후에 본인 id로 변경
+
+        if (buy.get().isDeposit() == false) {
+            buy.get().setDeposit(true);
+            return true;
+        } else {
+            buy.get().setDeposit(false);
+            return false;
+        }
     }
 }

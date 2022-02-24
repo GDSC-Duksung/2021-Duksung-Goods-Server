@@ -22,6 +22,7 @@ public class BuyRequestDto {
         return Buy.builder()
                 .item(item)
                 .count(this.count)
+                .deposit(false)
                 .createdAt(this.createdAt)
                 .user(user)
                 .build();

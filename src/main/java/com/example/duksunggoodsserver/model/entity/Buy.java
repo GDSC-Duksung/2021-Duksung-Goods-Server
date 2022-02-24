@@ -26,6 +26,8 @@ public class Buy {
     @NotNull
     private Integer count;
 
+    private boolean deposit;
+
     @NotNull
     private LocalDateTime createdAt;
 

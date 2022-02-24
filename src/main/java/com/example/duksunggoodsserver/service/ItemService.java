@@ -34,9 +34,11 @@ public class ItemService {
     private final ModelMapper modelMapper;
 
     @Transactional
-    public List<ItemResponseDto> getItemList(Long id) {
+    public List<ItemResponseDto> getItemList() {
+        Optional<User> user = Optional.ofNullable(userRepository.findById(1L)
+                .orElseThrow(() -> new ResourceNotFoundException("user", "userId", 1L))); // TODO: 임시로 해놓음. 추후에 본인 id로 변경
 
-        List<ItemResponseDto> itemResponseDtoList = itemRepository.findAllByUserId(id)
+        List<ItemResponseDto> itemResponseDtoList = itemRepository.findAllByUserId(user.get().getId())
                 .stream().map(item -> addImagesTo(item))
                 .collect(Collectors.toList());
         return itemResponseDtoList;
