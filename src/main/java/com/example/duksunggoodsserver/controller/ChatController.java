@@ -1,49 +1,21 @@
 package com.example.duksunggoodsserver.controller;
 
-import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
-import com.example.duksunggoodsserver.model.dto.response.MessageResponseDto;
-import com.example.duksunggoodsserver.service.ChatService;
+import com.example.duksunggoodsserver.model.ChatMessage;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.stereotype.Controller;
 
-import java.util.List;
-
-@Slf4j
 @RequiredArgsConstructor
-@RestController
-@RequestMapping("/api/chat")
+@Controller
 public class ChatController {
 
-    private final ChatService chatService;
+    private final SimpMessageSendingOperations messagingTemplate;
 
-    @GetMapping("/{id}")
-    public ResponseEntity getMessagesById(@PathVariable Long id) {
-
-        List<MessageResponseDto> messageResponseDtoList = chatService.getMessageList(id);
-        log.info("Succeeded in getting messages : viewer {} => {}", 1, messageResponseDtoList);
-        ResponseData responseData = ResponseData.builder()
-                .data(messageResponseDtoList)
-                .build();
-
-        return ResponseEntity.ok()
-                .body(responseData);
-    }
-
-    @GetMapping("/all")
-    public ResponseEntity getAllItems() {
-
-        List<MessageResponseDto> messageResponseDtoList = chatService.getAllMessages();
-        log.info("Succeeded in getting all messages : viewer {} => {}", 1, messageResponseDtoList);
-        ResponseData responseData = ResponseData.builder()
-                .data(messageResponseDtoList)
-                .build();
-
-        return ResponseEntity.ok()
-                .body(responseData);
+    @MessageMapping("/chat/message")
+    public void message(ChatMessage message) {
+        if (ChatMessage.MessageType.ENTER.equals(message.getType()))
+            message.setMessage(message.getSender() + "님이 입장하셨습니다.");
+        messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomUUID(), message);
     }
 }

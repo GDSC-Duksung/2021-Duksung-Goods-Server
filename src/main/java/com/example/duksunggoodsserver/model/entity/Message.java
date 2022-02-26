@@ -18,6 +18,13 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 메시지 타입 : 입장, 채팅
+    public enum MessageType {
+        ENTER, TALK
+    }
+
+    private MessageType type;
+
     @NotNull
     private String message;
 

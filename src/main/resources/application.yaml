@@ -13,6 +13,15 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: false
+  freemarker:
+    cache: false
+  mvc:
+    static-path-pattern: /resources/templates/**
 logging:
   file:
     name: ${user.dir}/log/testLog.log  # 로깅 파일 위치
