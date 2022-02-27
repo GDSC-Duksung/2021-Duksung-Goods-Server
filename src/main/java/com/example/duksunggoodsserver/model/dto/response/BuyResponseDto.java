@@ -21,5 +21,7 @@ public class BuyResponseDto {
 
     private Integer count;
 
+    private boolean deposit;
+
     private LocalDateTime createdAt;
 }

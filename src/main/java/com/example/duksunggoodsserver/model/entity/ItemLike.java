@@ -3,8 +3,6 @@ package com.example.duksunggoodsserver.model.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -12,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Like {
+public class ItemLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

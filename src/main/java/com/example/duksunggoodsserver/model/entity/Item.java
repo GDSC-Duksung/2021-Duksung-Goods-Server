@@ -1,13 +1,10 @@
 package com.example.duksunggoodsserver.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -26,8 +23,6 @@ public class Item {
     @NotNull
     private String description;
 
-    private String image;
-
     @NotNull
     private Integer price;
 
@@ -36,10 +31,10 @@ public class Item {
     private Integer maxNumber;
 
     @NotNull
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @NotNull
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     private Boolean progress;
 

@@ -1,18 +1,20 @@
 package com.example.duksunggoodsserver.controller;
 
-import com.example.duksunggoodsserver.config.responseEntity.ErrorResponse;
 import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
-import com.example.duksunggoodsserver.config.responseEntity.StatusEnum;
 import com.example.duksunggoodsserver.model.dto.request.PromotionRequestDto;
 import com.example.duksunggoodsserver.model.dto.response.PromotionResponseDto;
 import com.example.duksunggoodsserver.service.PromotionService;
+import com.example.duksunggoodsserver.service.S3Service;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @Slf4j
@@ -22,13 +24,14 @@ import java.util.List;
 public class PromotionController {
 
     private final PromotionService promotionService;
+    private final S3Service s3Service;
 
     @GetMapping("/")
     @ApiOperation(value = "모든 배너 조회")
     public ResponseEntity getAllPromotions(){
 
         List<PromotionResponseDto> promotionResponseDtoList = promotionService.getAllPromotions();
-
+        log.info("Succeeded in getting all promotions : viewer {} => {}", 1, promotionResponseDtoList);
         ResponseData responseData = ResponseData.builder()
                 .data(promotionResponseDtoList)
                 .build();
@@ -42,15 +45,7 @@ public class PromotionController {
     public ResponseEntity getPromotion(@PathVariable Long id){
 
         PromotionResponseDto promotionResponseDto = promotionService.getPromotion(id);
-
-        if (promotionResponseDto == null) {
-            ErrorResponse errorResponse = ErrorResponse.builder()
-                    .status(StatusEnum.NOT_FOUND)
-                    .message("id가 null")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }
-
+        log.info("Succeeded in getting promotion : viewer {} => {}", 1, promotionResponseDto);
         ResponseData responseData = ResponseData.builder()
                 .data(promotionResponseDto)
                 .build();
@@ -59,20 +54,17 @@ public class PromotionController {
                 .body(responseData);
     }
 
-    @PostMapping("/")
+    @PostMapping("/{id}")
     @ApiOperation(value = "배너 생성")
-    public ResponseEntity createPromotion(@RequestBody PromotionRequestDto requestDto){
+    public ResponseEntity createPromotion(@PathVariable Long id, @RequestPart MultipartFile file, @Valid @RequestPart PromotionRequestDto promotionRequestDto) throws IOException {
 
-        PromotionResponseDto promotionResponseDto = promotionService.createPromotion(requestDto);
-
-        if (promotionResponseDto == null) {
-            ErrorResponse errorResponse = ErrorResponse.builder()
-                    .status(StatusEnum.NOT_FOUND)
-                    .message("user 혹은 item이 null")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        if (file != null) {
+            String imgPath = s3Service.uploadFile(file);
+            promotionRequestDto.setImage(imgPath);
         }
 
+        PromotionResponseDto promotionResponseDto = promotionService.createPromotion(id, promotionRequestDto);
+        log.info("Succeeded in posting promotion : viewer {} => {}", 1, promotionResponseDto);
         ResponseData responseData = ResponseData.builder()
                 .data(promotionResponseDto)
                 .build();
@@ -83,18 +75,10 @@ public class PromotionController {
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "배너 삭제")
-    public ResponseEntity deletePromotion(@PathVariable Long id){
+    public ResponseEntity deletePromotion(@PathVariable Long id) throws UnsupportedEncodingException {
 
         Long promotion = promotionService.deletePromotion(id);
-
-        if (promotion == null) {
-            ErrorResponse errorResponse = ErrorResponse.builder()
-                    .status(StatusEnum.NOT_FOUND)
-                    .message("id가 null")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }
-
+        log.info("Succeeded in deleting promotion : viewer {} => {}", 1, promotion);
         ResponseData responseData = ResponseData.builder()
                 .data(promotion)
                 .build();

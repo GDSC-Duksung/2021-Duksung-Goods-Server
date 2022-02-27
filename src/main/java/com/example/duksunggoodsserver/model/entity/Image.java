@@ -1,10 +1,10 @@
 package com.example.duksunggoodsserver.model.entity;
 
-import com.sun.istack.NotNull;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
@@ -12,23 +12,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Buy {
+public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private User user;
+    @NotNull
+    private String url;
 
     @ManyToOne
+    @JoinColumn(name = "item_id")
+    @JsonManagedReference
     private Item item;
-
-    @NotNull
-    private Integer count;
-
-    private boolean deposit;
-
-    @NotNull
-    private LocalDateTime createdAt;
-
 }

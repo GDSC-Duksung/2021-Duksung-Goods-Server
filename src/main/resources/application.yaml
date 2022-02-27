@@ -13,3 +13,21 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: false
+  freemarker:
+    cache: false
+  mvc:
+    static-path-pattern: /resources/templates/**
+logging:
+  file:
+    name: ${user.dir}/log/testLog.log  # 로깅 파일 위치
+  logback:
+    rollingpolicy:
+      max-history: 30 # 로그 파일 삭제 주기로, 30일 이후 로그는 삭제
+      max-file-size: 10MB # 로그 파일 하나당 최대 파일 사이즈
+  level:
+    root: info
