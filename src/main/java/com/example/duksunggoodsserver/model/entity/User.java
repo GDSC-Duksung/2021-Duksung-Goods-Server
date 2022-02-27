@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -32,15 +31,19 @@ public class User {
     @NotNull
     private String name;
 
-    private String nickname;
+    @Column(name = "nickname")
+    private String username;
 
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     private String address;
 
+    @NotNull
     @CreatedDate
     private LocalDateTime createdAt;
 
+    @NotNull
     @CreatedBy
     private String createdBy;
 
@@ -49,5 +52,4 @@ public class User {
 
     @LastModifiedBy
     private String updatedBy;
-
 }

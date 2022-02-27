@@ -1,17 +1,23 @@
 package com.example.duksunggoodsserver.controller;
 
-import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
-import com.example.duksunggoodsserver.model.dto.response.BuyResponseDto;
-import com.example.duksunggoodsserver.model.dto.response.ItemResponseDto;
-import com.example.duksunggoodsserver.service.BuyService;
-import com.example.duksunggoodsserver.service.ItemService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import com.example.duksunggoodsserver.model.dto.request.UserRequestDto;
+import com.example.duksunggoodsserver.model.dto.response.UserResponseDto;
+import com.example.duksunggoodsserver.model.entity.User;
+import com.example.duksunggoodsserver.service.UserService;
+import io.swagger.annotations.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -19,62 +25,43 @@ import java.util.List;
 @RequestMapping("/api/user")
 public class UserController {
 
-    private final BuyService buyService;
-    private final ItemService itemService;
+    private final UserService userService;
+    private final ModelMapper modelMapper;
 
-    @GetMapping("/mypage/buy")
-    @ApiOperation(value = "구매 목록 조회")
-    public ResponseEntity getBuyList() {
-
-        List<BuyResponseDto> buyResponseDtoList = buyService.getBuyList();
-        log.info("Succeeded in getting buyList of item : viewer {} => {}", 1, buyResponseDtoList);
-        ResponseData responseData = ResponseData.builder()
-                .data(buyResponseDtoList)
-                .build();
-
-        return ResponseEntity.ok()
-                .body(responseData);
+    @PostMapping("/signin")
+    @ApiOperation(value = "${UserController.signIn}")
+    @ApiResponses(value = {//
+            @ApiResponse(code = 400, message = "Something went wrong"), //
+            @ApiResponse(code = 422, message = "Invalid username/password supplied")})
+    public String login(//
+                        @ApiParam("Username") @RequestParam String username, //
+                        @ApiParam("Password") @RequestParam String password) {
+        return userService.signIn(username, password);
     }
 
-    @GetMapping("/mypage/sell")
-    @ApiOperation(value = "판매 목록 조회")
-    public ResponseEntity getSellList() {
-
-        List<ItemResponseDto> itemResponseDtoList = itemService.getItemList();
-        log.info("Succeeded in getting sellList of item : viewer {} => {}", 1, itemResponseDtoList);
-        ResponseData responseData = ResponseData.builder()
-                .data(itemResponseDtoList)
-                .build();
-
-        return ResponseEntity.ok()
-                .body(responseData);
+    @PostMapping("/signup")
+    @ApiOperation(value = "${UserController.signUp}")
+    @ApiResponses(value = {//
+            @ApiResponse(code = 400, message = "Something went wrong"), //
+            @ApiResponse(code = 403, message = "Access denied"), //
+            @ApiResponse(code = 422, message = "Username is already in use")})
+    public String signUp(@ApiParam("Signup User") @RequestBody UserRequestDto user) {
+        return userService.signUp(modelMapper.map(user, User.class));
     }
 
-    @GetMapping("/mypage/sell/{itemId}")
-    @ApiOperation(value = "입금 목록 조회", notes = "내 판매 아이템의 입금 목록을 조회한다.")
-    public ResponseEntity getDepositList(@PathVariable Long itemId) {
-
-        List<BuyResponseDto> buyResponseDtoList = buyService.getDepositList(itemId);
-        log.info("Succeeded in getting deposit of item : viewer {} => {}", 1, buyResponseDtoList);
-        ResponseData responseData = ResponseData.builder()
-                .data(buyResponseDtoList)
-                .build();
-
-        return ResponseEntity.ok()
-                .body(responseData);
+    @GetMapping(value = "/me")
+    @ApiOperation(value = "${UserController.me}", response = UserResponseDto.class, authorizations = { @Authorization(value="apiKey") })
+    @ApiResponses(value = {//
+            @ApiResponse(code = 400, message = "Something went wrong"), //
+            @ApiResponse(code = 403, message = "Access denied"), //
+            @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+    public UserResponseDto whoami(HttpServletRequest req) {
+        return modelMapper.map(userService.getCurrentUser(req), UserResponseDto.class);
     }
 
-    @PatchMapping("/mypage/sell/{buyId}")
-    @ApiOperation(value = "입금 변경 체크")
-    public ResponseEntity patchDeposit(@PathVariable Long buyId) {
-
-        boolean result = buyService.changeDeposit(buyId);
-        log.info("Succeeded in patching deposit of item : viewer {} => {}", 1, result);
-        ResponseData responseData = ResponseData.builder()
-                .data(result)
-                .build();
-
-        return ResponseEntity.ok()
-                .body(responseData);
+    @GetMapping("/refresh")
+    public String refresh(HttpServletRequest req) {
+        return userService.refresh(req.getRemoteUser());
     }
+
 }
