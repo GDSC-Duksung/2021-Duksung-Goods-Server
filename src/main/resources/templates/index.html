@@ -52,7 +52,7 @@
         },
         methods: {
             findAllRoom: function() {
-                axios.get('/api/chat/rooms').then(response => { this.chatrooms = response.data; });
+                axios.get('/api/chat/rooms').then(response => { this.chatrooms = response.data.data; });
             },
             createRoom: function() {
                 if("" === this.room_name) {
@@ -73,8 +73,6 @@
                 }
             },
             enterRoom: function(roomUUID) {
-                var sender = prompt('대화명을 입력해 주세요.');
-                localStorage.setItem('wschat.sender',sender);
                 localStorage.setItem('wschat.roomUUID',roomUUID);
                 location.href="/api/chat/room/enter/"+roomUUID;
             }

@@ -57,12 +57,15 @@
         },
         created() {
             this.roomUUID = localStorage.getItem('wschat.roomUUID');
-            this.sender = localStorage.getItem('wschat.sender');
+            this.findUser();
             this.findRoom();
         },
         methods: {
+            findUser: function() {
+                axios.get('/api/user/info').then(response => { this.sender = response.data.data.nickname; });
+            },
             findRoom: function() {
-                axios.get('/api/chat/room/'+this.roomUUID).then(response => { this.room = response.data; });
+                axios.get('/api/chat/room/'+this.roomUUID).then(response => { this.room = response.data.data; });
             },
             sendMessage: function() {
                 ws.send("/pub/chat/message", {}, JSON.stringify({type:'TALK', roomUUID:this.roomUUID, sender:this.sender, message:this.message}));

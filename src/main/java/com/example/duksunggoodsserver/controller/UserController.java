@@ -3,8 +3,10 @@ package com.example.duksunggoodsserver.controller;
 import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
 import com.example.duksunggoodsserver.model.dto.response.BuyResponseDto;
 import com.example.duksunggoodsserver.model.dto.response.ItemResponseDto;
+import com.example.duksunggoodsserver.model.dto.response.UserResponseDto;
 import com.example.duksunggoodsserver.service.BuyService;
 import com.example.duksunggoodsserver.service.ItemService;
+import com.example.duksunggoodsserver.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,22 @@ public class UserController {
 
     private final BuyService buyService;
     private final ItemService itemService;
+    private final UserService userService;
+
+    @GetMapping("/info")
+    @ApiOperation(value = "유저 정보 조회")
+    public ResponseEntity getUser() {
+
+        UserResponseDto userResponseDto = userService.getUser();
+        log.info("Succeeded in getting user : viewer {} => {}", 1, userResponseDto);
+        ResponseData responseData = ResponseData.builder()
+                .data(userResponseDto)
+                .build();
+
+        return ResponseEntity.ok()
+                .body(responseData);
+    }
+
 
     @GetMapping("/mypage/buy")
     @ApiOperation(value = "구매 목록 조회")
