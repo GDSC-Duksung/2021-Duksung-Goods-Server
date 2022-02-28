@@ -23,4 +23,6 @@ public class ChatResponseDto {
     private ChatRoom chatRoom;
 
     private UserResponseDto user;
+
+    private String sender;
 }

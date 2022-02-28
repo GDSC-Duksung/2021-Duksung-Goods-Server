@@ -1,6 +1,7 @@
 package com.example.duksunggoodsserver.controller;
 
 import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
+import com.example.duksunggoodsserver.model.dto.request.ChatRoomRequestDto;
 import com.example.duksunggoodsserver.model.dto.response.ChatRoomJoinResponseDto;
 import com.example.duksunggoodsserver.model.dto.response.ChatRoomResponseDto;
 import com.example.duksunggoodsserver.service.ChatRoomService;
@@ -50,9 +51,9 @@ public class ChatRoomController {
 
     @PostMapping("/room")
     @ApiOperation(value = "1:N 채팅방 생성")
-    public ResponseEntity createChatRoom(@RequestParam String name, @RequestBody List<Long> userIdList) {
+    public ResponseEntity createChatRoom(@RequestBody ChatRoomRequestDto chatRoomRequestDto) {
 
-        ChatRoomResponseDto chatRoomResponseDto = chatRoomService.createChatRoom(name, userIdList);
+        ChatRoomResponseDto chatRoomResponseDto = chatRoomService.createChatRoom(chatRoomRequestDto.getName(), chatRoomRequestDto.getUserIdList());
         log.info("Succeeded in posting a 1:N chatRoom : viewer {} => {}", 1, chatRoomResponseDto);
         ResponseData responseData = ResponseData.builder()
                 .data(chatRoomResponseDto)
