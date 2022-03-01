@@ -81,4 +81,18 @@ public class ItemController {
         return ResponseEntity.ok()
                 .body(responseData);
     }
+
+    @GetMapping("/mypage/sell")
+    @ApiOperation(value = "판매 목록 조회")
+    public ResponseEntity getSellList() {
+
+        List<ItemResponseDto> itemResponseDtoList = itemService.getItemList();
+        log.info("Succeeded in getting sellList of item : viewer {} => {}", 1, itemResponseDtoList);
+        ResponseData responseData = ResponseData.builder()
+                .data(itemResponseDtoList)
+                .build();
+
+        return ResponseEntity.ok()
+                .body(responseData);
+    }
 }

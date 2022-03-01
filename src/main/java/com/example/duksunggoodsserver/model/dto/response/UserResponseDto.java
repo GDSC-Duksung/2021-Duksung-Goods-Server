@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,12 +17,6 @@ public class UserResponseDto {
 
     private String email;
 
-    private String name;
-
     private String nickname;
-
-    private String phoneNumber;
-
-    private String address;
 
 }
