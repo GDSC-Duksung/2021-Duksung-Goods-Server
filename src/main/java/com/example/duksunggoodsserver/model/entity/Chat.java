@@ -13,15 +13,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Message {
+public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    // 메시지 타입 : 입장, 채팅
-    public enum MessageType {
-        ENTER, TALK
-    }
 
     private MessageType type;
 
