@@ -47,7 +47,7 @@ public class UserService {
             user.setCreatedAt(LocalDateTime.now());
             user.setCreatedBy(user.getUsername());
             userRepository.save(user);
-            return jwtTokenProvider.createToken(user.getUsername());
+            return jwtTokenProvider.createToken(user.getEmail());
         } else {
             throw new CustomException("Email or Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
         }
@@ -62,7 +62,7 @@ public class UserService {
     }
 
     public Optional<User> getCurrentUser(HttpServletRequest req) {
-        Optional<User> user = userRepository.findByUsername(jwtTokenProvider.getUsername(jwtTokenProvider.resolveToken(req)));
+        Optional<User> user = userRepository.findByUsername(jwtTokenProvider.getEmail(jwtTokenProvider.resolveToken(req)));
         if (user.isPresent())
             return user;
         else

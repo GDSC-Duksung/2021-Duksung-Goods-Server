@@ -46,7 +46,7 @@ public class UserController {
     @ApiOperation(value = "${UserController.signIn}")
     @ApiResponses(value = {//
             @ApiResponse(code = 400, message = "Something went wrong"), //
-            @ApiResponse(code = 422, message = "Invalid username/password supplied")})
+            @ApiResponse(code = 422, message = "Invalid email/password supplied")})
     public ResponseEntity login(@RequestBody UserLoginRequestDto user) {
         String jwtToken = userService.signIn(user.getEmail(), user.getPassword());
         ResponseData responseData = ResponseData.builder()
