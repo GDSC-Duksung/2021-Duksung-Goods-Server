@@ -62,7 +62,7 @@ public class UserService {
     }
 
     public Optional<User> getCurrentUser(HttpServletRequest req) {
-        Optional<User> user = userRepository.findByUsername(jwtTokenProvider.getEmail(jwtTokenProvider.resolveToken(req)));
+        Optional<User> user = userRepository.findByEmail(jwtTokenProvider.getEmail(jwtTokenProvider.resolveToken(req)));
         if (user.isPresent())
             return user;
         else

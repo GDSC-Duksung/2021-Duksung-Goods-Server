@@ -76,7 +76,7 @@ public class UserController {
             @ApiResponse(code = 403, message = "Access denied"), //
             @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
     public ResponseEntity whoami(HttpServletRequest req) {
-        UserResponseDto userResponseDto = modelMapper.map(userService.getCurrentUser(req), UserResponseDto.class);
+        UserResponseDto userResponseDto = modelMapper.map(userService.getCurrentUser(req).get(), UserResponseDto.class);
         ResponseData responseData = ResponseData.builder()
                 .data(userResponseDto)
                 .build();
