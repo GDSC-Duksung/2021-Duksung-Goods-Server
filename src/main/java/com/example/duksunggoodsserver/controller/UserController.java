@@ -1,21 +1,19 @@
 package com.example.duksunggoodsserver.controller;
 
+import com.example.duksunggoodsserver.config.responseEntity.ResponseData;
+import com.example.duksunggoodsserver.model.dto.request.UserLoginRequestDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import com.example.duksunggoodsserver.model.dto.request.UserRequestDto;
 import com.example.duksunggoodsserver.model.dto.response.UserResponseDto;
 import com.example.duksunggoodsserver.model.entity.User;
 import com.example.duksunggoodsserver.service.UserService;
 import io.swagger.annotations.*;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,10 +31,12 @@ public class UserController {
     @ApiResponses(value = {//
             @ApiResponse(code = 400, message = "Something went wrong"), //
             @ApiResponse(code = 422, message = "Invalid username/password supplied")})
-    public String login(//
-                        @ApiParam("Username") @RequestParam String username, //
-                        @ApiParam("Password") @RequestParam String password) {
-        return userService.signIn(username, password);
+    public ResponseEntity login(@RequestBody UserLoginRequestDto user) {
+        String jwtToken = userService.signIn(user.getEmail(), user.getPassword());
+        ResponseData responseData = ResponseData.builder()
+                .data(jwtToken)
+                .build();
+        return ResponseEntity.ok().body(responseData);
     }
 
     @PostMapping("/signup")
@@ -45,8 +45,12 @@ public class UserController {
             @ApiResponse(code = 400, message = "Something went wrong"), //
             @ApiResponse(code = 403, message = "Access denied"), //
             @ApiResponse(code = 422, message = "Username is already in use")})
-    public String signUp(@ApiParam("Signup User") @RequestBody UserRequestDto user) {
-        return userService.signUp(modelMapper.map(user, User.class));
+    public ResponseEntity signUp(@ApiParam("Signup User") @RequestBody UserRequestDto user) {
+        String jwtToken = userService.signUp(modelMapper.map(user, User.class));
+        ResponseData responseData = ResponseData.builder()
+                .data(jwtToken)
+                .build();
+        return ResponseEntity.ok().body(responseData);
     }
 
     @GetMapping(value = "/me")
@@ -55,13 +59,21 @@ public class UserController {
             @ApiResponse(code = 400, message = "Something went wrong"), //
             @ApiResponse(code = 403, message = "Access denied"), //
             @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
-    public UserResponseDto whoami(HttpServletRequest req) {
-        return modelMapper.map(userService.getCurrentUser(req), UserResponseDto.class);
+    public ResponseEntity whoami(HttpServletRequest req) {
+        UserResponseDto userResponseDto = modelMapper.map(userService.getCurrentUser(req), UserResponseDto.class);
+        ResponseData responseData = ResponseData.builder()
+                .data(userResponseDto)
+                .build();
+        return ResponseEntity.ok().body(responseData);
     }
 
     @GetMapping("/refresh")
-    public String refresh(HttpServletRequest req) {
-        return userService.refresh(req.getRemoteUser());
+    public ResponseEntity refresh(HttpServletRequest req) {
+        String refreshToken = userService.refresh(req.getRemoteUser());
+        ResponseData responseData = ResponseData.builder()
+                .data(refreshToken)
+                .build();
+        return ResponseEntity.ok().body(responseData);
     }
 
 }

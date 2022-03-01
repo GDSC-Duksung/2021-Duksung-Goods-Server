@@ -27,24 +27,24 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
 
-    public String signIn(String username, String password) {
+    public String signIn(String email, String password) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            return jwtTokenProvider.createToken(username);
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            return jwtTokenProvider.createToken(email);
         } catch (AuthenticationException e) {
-            throw new CustomException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new CustomException("Invalid email/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 
     public String signUp(User user) {
-        if (!userRepository.existsByUsername(user.getUsername())) {
+        if (!userRepository.existsByUsername(user.getUsername()) && !userRepository.existsByEmail(user.getEmail())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setCreatedAt(LocalDateTime.now());
             user.setCreatedBy(user.getUsername());
             userRepository.save(user);
             return jwtTokenProvider.createToken(user.getUsername());
         } else {
-            throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new CustomException("Email or Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 
