@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Slf4j
@@ -27,28 +28,25 @@ public class ChatController {
     private final ChatService chatService;
 
     @MessageMapping("/chat/message")
-    public void message(ChatRequestDto chatRequestDto) {
-        if (MessageType.ENTER.equals(chatRequestDto.getType()) && !chatService.existEnterChat(chatRequestDto.getRoomUUID()))
+    public void message(HttpServletRequest req, ChatRequestDto chatRequestDto) {
+        if (MessageType.ENTER.equals(chatRequestDto.getType()) && !chatService.existEnterChat(req, chatRequestDto.getRoomUUID()))
             chatRequestDto.setMessage(chatRequestDto.getSender() + "님이 입장하셨습니다.");
         messagingTemplate.convertAndSend("/sub/chat/room/" + chatRequestDto.getRoomUUID(), chatRequestDto);
 
         // 입장 관련 채팅은 한 번만 저장
-        if (!MessageType.ENTER.equals(chatRequestDto.getType()) || !chatService.existEnterChat(chatRequestDto.getRoomUUID()))
-            chatService.saveChat(chatRequestDto);
+        if (!MessageType.ENTER.equals(chatRequestDto.getType()) || !chatService.existEnterChat(req, chatRequestDto.getRoomUUID()))
+            chatService.saveChat(req, chatRequestDto);
     }
 
     @GetMapping("/api/chat/{roomUUID}")
     @ResponseBody
     @ApiOperation(value = "채팅룸에 채팅 조회")
     public ResponseEntity getChatListInChatRoom(@PathVariable String roomUUID) {
-
         List<ChatResponseDto> chatResponseDtoList = chatService.getChatListInChatRoom(roomUUID);
         log.info("Succeeded in getting chatList in chatRoom : viewer {} => {}", 1, chatResponseDtoList);
         ResponseData responseData = ResponseData.builder()
                 .data(chatResponseDtoList)
                 .build();
-
-        return ResponseEntity.ok()
-                .body(responseData);
+        return ResponseEntity.ok().body(responseData);
     }
 }

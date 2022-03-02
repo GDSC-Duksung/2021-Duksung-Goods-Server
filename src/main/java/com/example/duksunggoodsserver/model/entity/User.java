@@ -31,8 +31,7 @@ public class User {
     @NotNull
     private String name;
 
-    @Column(name = "nickname")
-    private String username;
+    private String nickname;
 
     @Column(name = "phone_number")
     private String phoneNumber;

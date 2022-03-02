@@ -5,8 +5,6 @@ import com.example.duksunggoodsserver.model.dto.request.UserLoginRequestDto;
 import com.example.duksunggoodsserver.model.dto.request.UserRequestDto;
 import com.example.duksunggoodsserver.model.dto.response.UserResponseDto;
 import com.example.duksunggoodsserver.model.entity.User;
-import com.example.duksunggoodsserver.service.BuyService;
-import com.example.duksunggoodsserver.service.ItemService;
 import com.example.duksunggoodsserver.service.UserService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -23,24 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/api/user")
 public class UserController {
 
-    private final BuyService buyService;
-    private final ItemService itemService;
     private final UserService userService;
     private final ModelMapper modelMapper;
-
-    @GetMapping("/info")
-    @ApiOperation(value = "유저 정보 조회")
-    public ResponseEntity getUser() {
-
-        UserResponseDto userResponseDto = userService.getUser();
-        log.info("Succeeded in getting user : viewer {} => {}", 1, userResponseDto);
-        ResponseData responseData = ResponseData.builder()
-                .data(userResponseDto)
-                .build();
-
-        return ResponseEntity.ok()
-                .body(responseData);
-    }
 
     @PostMapping("/signin")
     @ApiOperation(value = "${UserController.signIn}")

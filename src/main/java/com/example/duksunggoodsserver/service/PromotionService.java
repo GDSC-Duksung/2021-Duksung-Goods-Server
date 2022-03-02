@@ -8,12 +8,12 @@ import com.example.duksunggoodsserver.model.dto.request.PromotionRequestDto;
 import com.example.duksunggoodsserver.model.entity.User;
 import com.example.duksunggoodsserver.repository.ItemRepository;
 import com.example.duksunggoodsserver.repository.PromotionRepository;
-import com.example.duksunggoodsserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
@@ -27,14 +27,13 @@ import java.util.stream.Collectors;
 public class PromotionService {
 
     private final PromotionRepository promotionRepository;
-    private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final ModelMapper modelMapper;
+    private final UserService userService;
     private final S3Service s3Service;
 
     @Transactional
     public List<PromotionResponseDto> getAllPromotions(){
-
         List<PromotionResponseDto> promotionResponseDtoList = promotionRepository.findAll()
                 .stream().map(promotion -> modelMapper.map(promotion, PromotionResponseDto.class))
                 .collect(Collectors.toList());
@@ -61,19 +60,16 @@ public class PromotionService {
     }
 
     @Transactional
-    public PromotionResponseDto createPromotion(Long id, PromotionRequestDto promotionRequestDto){
+    public PromotionResponseDto createPromotion(HttpServletRequest req, Long id, PromotionRequestDto promotionRequestDto){
+        Optional<User> user = userService.getCurrentUser(req);
         Optional<Item> item = Optional.ofNullable(itemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("item", "itemId", id)));
-        Optional<User> user = Optional.ofNullable(userRepository.findById(1L)
-                .orElseThrow(() -> new ResourceNotFoundException("user", "userId", 1L))); // TODO: 임시로 해놓음. 추후에 본인 id로 변경 (로그인 구현 완료시, access_token으로 사용자 찾기)
-
         Promotion newPromotion = promotionRepository.save(promotionRequestDto.toPromotionEntity(item.get(), user.get()));
         return modelMapper.map(newPromotion, PromotionResponseDto.class);
     }
 
     @Transactional
     public Long deletePromotion(Long id) throws UnsupportedEncodingException {
-
         Optional<Promotion> promotion = Optional.ofNullable(promotionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("promotion", "promotionId", id)));
         s3Service.deleteFileInBucket(promotion.get().getImage());

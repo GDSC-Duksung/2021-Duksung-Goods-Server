@@ -63,7 +63,7 @@
         },
         methods: {
             findUser: function() {
-                axios.get('/api/user/info').then(response => { this.sender = response.data.data.nickname; });
+                axios.get('/api/user/me').then(response => { this.sender = response.data.data.nickname; });
             },
             findRoom: function() {
                 axios.get('/api/chat/room/'+this.roomUUID).then(response => { this.room = response.data.data; });

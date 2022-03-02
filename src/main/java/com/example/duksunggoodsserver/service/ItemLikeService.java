@@ -6,11 +6,11 @@ import com.example.duksunggoodsserver.model.entity.ItemLike;
 import com.example.duksunggoodsserver.model.entity.User;
 import com.example.duksunggoodsserver.repository.ItemRepository;
 import com.example.duksunggoodsserver.repository.ItemLikeRepository;
-import com.example.duksunggoodsserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -22,13 +22,11 @@ public class ItemLikeService {
 
     private final ItemLikeRepository itemLikeRepository;
     private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Transactional
-    public List<ItemLike> getItemLike() {
-        Optional<User> user = Optional.ofNullable(userRepository.findById(1L)
-                .orElseThrow(() -> new ResourceNotFoundException("user", "userId", 1L))); // TODO: 임시로 해놓음. 추후에 본인 id로 변경
-
+    public List<ItemLike> getItemLike(HttpServletRequest req) {
+        Optional<User> user = userService.getCurrentUser(req);
         List<ItemLike> itemLikeList = itemLikeRepository.findAllByUserOrderByIdDesc(user.get()); // 최근 찜 기준 내림차순 정렬
         return itemLikeList;
     }
@@ -40,11 +38,10 @@ public class ItemLikeService {
     }
 
     @Transactional
-    public boolean changeItemLike(Long itemId) {
+    public boolean changeItemLike(HttpServletRequest req, Long itemId) {
+        Optional<User> user = userService.getCurrentUser(req);
         Optional<Item> item = Optional.ofNullable(itemRepository.findById(itemId)
                 .orElseThrow(() -> new ResourceNotFoundException("item", "itemId", itemId)));
-        Optional<User> user = Optional.ofNullable(userRepository.findById(1L)
-                .orElseThrow(() -> new ResourceNotFoundException("user", "userId", 1L))); // TODO: 임시로 해놓음. 추후에 본인 id로 변경
 
         if (itemLikeRepository.findByUserAndItem(user.get(), item.get()).isEmpty()) {
             ItemLike itemLike = ItemLike.builder()

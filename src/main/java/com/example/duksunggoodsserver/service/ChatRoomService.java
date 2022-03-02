@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,13 +27,12 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomJoinRepository chatRoomJoinRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final ModelMapper modelMapper;
 
     @Transactional
-    public List<ChatRoomResponseDto> getChatRoomList() {
-
-        Optional<User> user = Optional.ofNullable(userRepository.findById(1L)
-                .orElseThrow(() -> new ResourceNotFoundException("user", "userId", 1L))); // TODO: 임시로 해놓음. 추후에 본인 id로 변경
+    public List<ChatRoomResponseDto> getChatRoomList(HttpServletRequest req) {
+        Optional<User> user = userService.getCurrentUser(req);
         List<ChatRoomJoin> chatRoomJoinList = chatRoomJoinRepository.findByUser(user.get());
         List<Long> chatRoomIdList = chatRoomJoinList.stream().map(value -> value.getChatRoom().getId()).collect(Collectors.toList());
         List<ChatRoomResponseDto> chatRoomList = chatRoomRepository.findAllById(chatRoomIdList)
@@ -43,19 +43,15 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public ChatRoomResponseDto getChatRoom(String roomUUID) {
-
+    public ChatRoomResponseDto getChatRoom(HttpServletRequest req, String roomUUID) {
         Optional<ChatRoom> chatRoom = Optional.ofNullable(chatRoomRepository.findByRoomUUID(roomUUID)
                 .orElseThrow(() -> new ResourceNotFoundException("chatRoom", "chatRoomUUID", roomUUID)));
-
         return modelMapper.map(chatRoom.get(), ChatRoomResponseDto.class);
     }
 
     @Transactional
-    public ChatRoomResponseDto createChatRoom(String name, List<Long> userIdList) {
-
-        Optional<User> user = Optional.ofNullable(userRepository.findById(1L)
-                .orElseThrow(() -> new ResourceNotFoundException("user", "userId", 1L))); // TODO: 임시로 해놓음. 추후에 본인 id로 변경
+    public ChatRoomResponseDto createChatRoom(HttpServletRequest req, String name, List<Long> userIdList) {
+        Optional<User> user = userService.getCurrentUser(req);
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .name(name)
@@ -71,7 +67,7 @@ public class ChatRoomService {
         chatRoomJoinArrayList.add(chatRoomJoin);
         for (Long userId: userIdList) {
             Optional<User> addUser = Optional.ofNullable(userRepository.findById(userId)
-                    .orElseThrow(() -> new ResourceNotFoundException("user", "userId", userId))); // TODO: 임시로 해놓음. 추후에 본인 id로 변경
+                    .orElseThrow(() -> new ResourceNotFoundException("user", "userId", userId)));
 
             ChatRoomJoin chatRoomJoin2 = ChatRoomJoin.builder()
                     .user(addUser.get())
@@ -84,10 +80,8 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public ChatRoomJoinResponseDto addUserToChatRoom(Long chatRoomId, Long userId) {
-
-        Optional<User> user = Optional.ofNullable(userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("user", "userId", userId))); // TODO: 임시로 해놓음. 추후에 본인 id로 변경
+    public ChatRoomJoinResponseDto addUserToChatRoom(HttpServletRequest req, Long chatRoomId, Long userId) {
+        Optional<User> user = userService.getCurrentUser(req);
         Optional<ChatRoom> chatRoom = Optional.ofNullable(chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ResourceNotFoundException("chatRoom", "chatRoomId", chatRoomId)));
 
@@ -105,18 +99,13 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public Long deleteUserFromChatRoom(Long roomId) {
-
-        Optional<User> user = Optional.ofNullable(userRepository.findById(1L)
-                .orElseThrow(() -> new ResourceNotFoundException("user", "userId", 1L))); // TODO: 임시로 해놓음. 추후에 본인 id로 변경
+    public Long deleteUserFromChatRoom(HttpServletRequest req, Long roomId) {
+        Optional<User> user = userService.getCurrentUser(req);
         Optional<ChatRoom> chatRoom = Optional.ofNullable(chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("chatRoom", "chatRoomId", roomId)));
-
         Optional<ChatRoomJoin> chatRoomJoin = Optional.ofNullable(chatRoomJoinRepository.findByUserAndChatRoom(user.get(), chatRoom.get())
                 .orElseThrow(() -> new ResourceNotFoundException("user & chatRoom", "userId & chatRoomId", 1L+" & "+roomId)));
-
-        chatRoomJoinRepository.deleteByUserAndChatRoom(user.get(), chatRoom.get()).get();
-
+        chatRoomJoinRepository.deleteByUserAndChatRoom(user.get(), chatRoom.get());
         return chatRoomJoin.get().getId();
     }
 }

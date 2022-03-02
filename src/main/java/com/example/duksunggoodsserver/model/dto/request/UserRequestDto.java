@@ -13,7 +13,7 @@ public class UserRequestDto {
 
     private String name;
 
-    private String username;
+    private String nickname;
 
     private String phoneNumber;
 
