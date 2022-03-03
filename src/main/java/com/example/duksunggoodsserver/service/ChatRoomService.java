@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,7 +44,7 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public ChatRoomResponseDto getChatRoom(HttpServletRequest req, String roomUUID) {
+    public ChatRoomResponseDto getChatRoom(String roomUUID) {
         Optional<ChatRoom> chatRoom = Optional.ofNullable(chatRoomRepository.findByRoomUUID(roomUUID)
                 .orElseThrow(() -> new ResourceNotFoundException("chatRoom", "chatRoomUUID", roomUUID)));
         return modelMapper.map(chatRoom.get(), ChatRoomResponseDto.class);
@@ -63,6 +64,7 @@ public class ChatRoomService {
         ChatRoomJoin chatRoomJoin = ChatRoomJoin.builder()
                 .user(user.get())
                 .chatRoom(chatRoom)
+                .createdAt(LocalDateTime.now())
                 .build();
         chatRoomJoinArrayList.add(chatRoomJoin);
         for (Long userId: userIdList) {
@@ -72,6 +74,7 @@ public class ChatRoomService {
             ChatRoomJoin chatRoomJoin2 = ChatRoomJoin.builder()
                     .user(addUser.get())
                     .chatRoom(chatRoom)
+                    .createdAt(LocalDateTime.now())
                     .build();
             chatRoomJoinArrayList.add(chatRoomJoin2);
         }
@@ -80,8 +83,9 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public ChatRoomJoinResponseDto addUserToChatRoom(HttpServletRequest req, Long chatRoomId, Long userId) {
-        Optional<User> user = userService.getCurrentUser(req);
+    public ChatRoomJoinResponseDto addUserToChatRoom(Long chatRoomId, Long userId) {
+        Optional<User> user = Optional.ofNullable(userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("user", "userId", userId)));
         Optional<ChatRoom> chatRoom = Optional.ofNullable(chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ResourceNotFoundException("chatRoom", "chatRoomId", chatRoomId)));
 
@@ -92,6 +96,7 @@ public class ChatRoomService {
         ChatRoomJoin chatRoomJoin = ChatRoomJoin.builder()
                 .user(user.get())
                 .chatRoom(chatRoom.get())
+                .createdAt(LocalDateTime.now())
                 .build();
         ChatRoomJoin chatRoomJoin2 = chatRoomJoinRepository.save(chatRoomJoin);
 

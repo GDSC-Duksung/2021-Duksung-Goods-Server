@@ -35,8 +35,8 @@ public class ChatRoomController {
 
     @GetMapping("/room/{roomUUID}")
     @ApiOperation(value = "채팅방 1개 조회")
-    public ResponseEntity getChatRoom(HttpServletRequest req, @PathVariable String roomUUID) {
-        ChatRoomResponseDto chatRoomResponseDto = chatRoomService.getChatRoom(req, roomUUID);
+    public ResponseEntity getChatRoom(@PathVariable String roomUUID) {
+        ChatRoomResponseDto chatRoomResponseDto = chatRoomService.getChatRoom(roomUUID);
         log.info("Succeeded in getting a chatRoom : viewer {} => {}", 1, chatRoomResponseDto);
         ResponseData responseData = ResponseData.builder()
                 .data(chatRoomResponseDto)
@@ -57,8 +57,8 @@ public class ChatRoomController {
 
     @PostMapping("/room/{roomId}/{userId}")
     @ApiOperation(value = "채팅방 유저 추가")
-    public ResponseEntity addUserToChatRoom(HttpServletRequest req, @PathVariable Long roomId, @PathVariable Long userId) {
-        ChatRoomJoinResponseDto chatRoomJoinResponseDto = chatRoomService.addUserToChatRoom(req, roomId, userId);
+    public ResponseEntity addUserToChatRoom(@PathVariable Long roomId, @PathVariable Long userId) {
+        ChatRoomJoinResponseDto chatRoomJoinResponseDto = chatRoomService.addUserToChatRoom(roomId, userId);
         log.info("Succeeded in adding user to chatRoom : viewer {} => {}", 1, chatRoomJoinResponseDto);
         ResponseData responseData = ResponseData.builder()
                 .data(chatRoomJoinResponseDto)
