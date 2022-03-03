@@ -1,8 +1,11 @@
 package com.example.duksunggoodsserver.model.entity;
 
+import com.sun.istack.NotNull;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -21,4 +24,7 @@ public class ChatRoomJoin {
     @ManyToOne
     private User user;
 
+    @NotNull
+    @CreatedDate
+    private LocalDateTime createdAt;
 }

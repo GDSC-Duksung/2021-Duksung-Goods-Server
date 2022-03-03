@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -26,18 +27,16 @@ import java.util.stream.Collectors;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final DemandSurveyTypeRepository demandSurveyTypeRepository;
     private final ImageRepository imageRepository;
+    private final UserService userService;
     private final S3Service s3Service;
     private final ModelMapper modelMapper;
 
     @Transactional
-    public List<ItemResponseDto> getItemList() {
-        Optional<User> user = Optional.ofNullable(userRepository.findById(1L)
-                .orElseThrow(() -> new ResourceNotFoundException("user", "userId", 1L))); // TODO: 임시로 해놓음. 추후에 본인 id로 변경
-
+    public List<ItemResponseDto> getItemList(HttpServletRequest req) {
+        Optional<User> user = userService.getCurrentUser(req);
         List<ItemResponseDto> itemResponseDtoList = itemRepository.findAllByUserId(user.get().getId())
                 .stream().map(item -> addImagesTo(item))
                 .collect(Collectors.toList());
@@ -54,7 +53,6 @@ public class ItemService {
 
     @Transactional
     public List<ItemResponseDto> getAllItems() {
-
         List<ItemResponseDto> itemResponseDtoList = itemRepository.findAll()
                 .stream().map(item -> addImagesTo(item))
                 .collect(Collectors.toList());
@@ -62,10 +60,8 @@ public class ItemService {
     }
 
     @Transactional
-    public ItemResponseDto createItem(List<MultipartFile> files, ItemRequestDto itemRequestDto) throws IOException {
-
-        Optional<User> user = Optional.ofNullable(userRepository.findById(1L)
-                .orElseThrow(() -> new ResourceNotFoundException("user", "userId", 1L))); // TODO: 임시로 해놓음. 추후에 본인 id로 변경 (로그인 구현 완료시, access_token으로 사용자 찾기)
+    public ItemResponseDto createItem(HttpServletRequest req, List<MultipartFile> files, ItemRequestDto itemRequestDto) throws IOException {
+        Optional<User> user = userService.getCurrentUser(req);
         Optional<Category> category = Optional.ofNullable(categoryRepository.findById(itemRequestDto.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("category", "categoryId", itemRequestDto.getCategoryId())));
         Optional<DemandSurveyType> demandSurveyType = Optional.ofNullable(demandSurveyTypeRepository.findById(itemRequestDto.getDemandSurveyTypeId())
@@ -91,7 +87,6 @@ public class ItemService {
 
     @Transactional
     public ImageResponseDto createImage(ImageRequestDto imageRequestDto) {
-
         Optional<Item> item = Optional.ofNullable(itemRepository.findById(imageRequestDto.getItemId())
                 .orElseThrow(() -> new ResourceNotFoundException("item", "itemId", imageRequestDto.getItemId())));
         Image image = imageRepository.save(imageRequestDto.toImageEntity(item.get()));
@@ -100,7 +95,6 @@ public class ItemService {
 
     @Transactional
     public Long deleteItem(Long itemId) throws UnsupportedEncodingException {
-
         Optional<Item> item = Optional.ofNullable(itemRepository.findById(itemId)
                 .orElseThrow(() -> new ResourceNotFoundException("item", "itemId", itemId)));
         List<Image> imageList = imageRepository.findAllByItemId(item.get().getId());
@@ -110,12 +104,10 @@ public class ItemService {
             imageRepository.deleteById(image.getId());
         }
         itemRepository.deleteById(itemId);
-
         return itemId;
     }
 
     public ItemResponseDto addImagesTo(Item item) {
-
         List<ImageResponseDto> imageList = imageRepository.findAllByItemId(item.getId())
                 .stream().map(image ->  modelMapper.map(image, ImageResponseDto.class))
                 .collect(Collectors.toList());

@@ -43,7 +43,7 @@ public class JwtTokenProvider {
 
         Claims claims = Jwts.claims().setSubject(email);
 
-        claims.put("userEmail", email);
+        claims.put("email", email);
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
@@ -62,7 +62,7 @@ public class JwtTokenProvider {
     }
 
     public String getEmail(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("userEmail", String.class);
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("email", String.class);
     }
 
     public String resolveToken(HttpServletRequest req) {

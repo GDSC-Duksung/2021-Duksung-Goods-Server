@@ -16,13 +16,17 @@ public class ChatRequestDto {
 
     private String sender; // 메시지 보낸사람
 
+    private Long senderId;
+
     private String message; // 메시지
+
+    private LocalDateTime time;
 
     public Chat toChatEntity(ChatRoom chatRoom, User user) {
         return Chat.builder()
                 .type(this.type)
                 .message(message)
-                .time(LocalDateTime.now())
+                .time(this.time)
                 .chatRoom(chatRoom)
                 .user(user)
                 .build();

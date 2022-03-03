@@ -21,7 +21,7 @@
     </div>
     <ul class="list-group">
         <li class="list-group-item" v-for="message in messages">
-            {{message.sender}} - {{message.message}}</a>
+            <b>{{message.sender}} - {{message.message}}</b> <small>{{message.time}}</small>
         </li>
     </ul>
     <div class="input-group">
@@ -52,6 +52,7 @@
             roomUUID: '',
             room: {},
             sender: '',
+            senderId: 0,
             message: '',
             messages: [],
         },
@@ -63,20 +64,26 @@
         },
         methods: {
             findUser: function() {
-                axios.get('/api/user/info').then(response => { this.sender = response.data.data.nickname; });
+                axios.get('/api/user/me').then(response => { this.sender = response.data.data.nickname; this.senderId = response.data.data.id });
             },
             findRoom: function() {
                 axios.get('/api/chat/room/'+this.roomUUID).then(response => { this.room = response.data.data; });
             },
             getAllMessage:function() {
-                axios.get('/api/chat/'+this.roomUUID).then(response => { this.messages = response.data.data; });
+                axios.get('/api/chat/'+this.roomUUID).then(response => {
+                    this.messages = response.data.data.map(message => {
+                        if (message.type == 'ENTER')
+                            message.sender = '[알림]';
+                        return message;
+                    });
+                });
             },
             sendMessage: function() {
-                ws.send("/pub/chat/message", {}, JSON.stringify({type:'TALK', roomUUID:this.roomUUID, sender:this.sender, message:this.message}));
+                ws.send("/pub/chat/message", {}, JSON.stringify({type:'TALK', roomUUID:this.roomUUID, sender:this.sender, senderId: this.senderId, message:this.message}));
                 this.message = '';
             },
             recvMessage: function(recv) {
-                this.messages.push({"type":recv.type,"sender":recv.type=='ENTER'?'[알림]':recv.sender,"message":recv.message})
+                this.messages.push({"type":recv.type,"sender":recv.type=='ENTER'?'[알림]':recv.sender,"senderId":this.senderId, "message":recv.message,"time":recv.time})
             }
         }
     });
@@ -87,7 +94,7 @@
             if (Object.keys(recv.message).length !== 0)
                 vm.recvMessage(recv);
         });
-        ws.send("/pub/chat/message", {}, JSON.stringify({type:'ENTER', roomUUID:vm.$data.roomUUID, sender:vm.$data.sender}));
+        ws.send("/pub/chat/message", {}, JSON.stringify({type:'ENTER', roomUUID:vm.$data.roomUUID, senderId: vm.$data.senderId, sender:vm.$data.sender}));
     }, function(error) {
         alert("error "+error);
     });

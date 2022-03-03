@@ -1,5 +1,7 @@
-package com.example.duksunggoodsserver.security;
+package com.example.duksunggoodsserver.config;
 
+import com.example.duksunggoodsserver.security.JwtTokenFilterConfigurer;
+import com.example.duksunggoodsserver.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,7 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/user/signin").permitAll()//
                 .antMatchers("/api/user/signup").permitAll()//
                 .antMatchers("/h2-console/**/**").permitAll()
-                .antMatchers("/api/**").permitAll()
+                .antMatchers("/**").permitAll()
                 // Disallow everything else..
                 .anyRequest().authenticated();
 
