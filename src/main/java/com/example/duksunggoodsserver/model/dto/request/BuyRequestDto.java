@@ -3,12 +3,14 @@ package com.example.duksunggoodsserver.model.dto.request;
 import com.example.duksunggoodsserver.model.entity.Buy;
 import com.example.duksunggoodsserver.model.entity.Item;
 import com.example.duksunggoodsserver.model.entity.User;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
 import java.time.LocalDateTime;
 
+@Data
 @Getter
 @NoArgsConstructor
 public class BuyRequestDto {

@@ -4,6 +4,7 @@ import com.example.duksunggoodsserver.exception.ResourceNotFoundException;
 import com.example.duksunggoodsserver.model.dto.request.BuyRequestDto;
 import com.example.duksunggoodsserver.model.dto.response.BuyResponseDto;
 import com.example.duksunggoodsserver.model.entity.*;
+import com.example.duksunggoodsserver.model.entity.Item;
 import com.example.duksunggoodsserver.repository.BuyRepository;
 import com.example.duksunggoodsserver.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,13 @@ public class BuyService {
                 .stream().map(buy -> modelMapper.map(buy, BuyResponseDto.class))
                 .collect(Collectors.toList());
         return buyResponseDtoList;
+    }
+
+    @Transactional
+    public BuyResponseDto getBuyDetail(Long buyId) {
+        Optional<Buy> buy = Optional.ofNullable(buyRepository.findById(buyId))
+                .orElseThrow(() -> new ResourceNotFoundException("buy", "buyId", buyId));
+        return modelMapper.map(buy, BuyResponseDto.class);
     }
 
     @Transactional
