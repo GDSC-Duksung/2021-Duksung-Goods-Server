@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ChatRoomViewController {
 
     @GetMapping("/")
-    public String home() {
-        return "index";
+    public String chatRoomList() {
+        return "chatroom";
     }
 
     @GetMapping("/room/enter/{roomUUID}")

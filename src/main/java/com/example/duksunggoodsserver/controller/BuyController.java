@@ -22,6 +22,28 @@ public class BuyController {
 
     private final BuyService buyService;
 
+    @GetMapping("")
+    @ApiOperation(value = "구매 목록 조회")
+    public ResponseEntity getBuyList(HttpServletRequest req) {
+        List<BuyResponseDto> buyResponseDtoList = buyService.getBuyList(req);
+        log.info("Succeeded in getting buyList of item : viewer {} => {}", 1, buyResponseDtoList);
+        ResponseData responseData = ResponseData.builder()
+                .data(buyResponseDtoList)
+                .build();
+        return ResponseEntity.ok().body(responseData);
+    }
+
+    @GetMapping("/{buyId}")
+    @ApiOperation(value = "구매 목록 상세 조회")
+    public ResponseEntity getBuyDetail(@PathVariable Long buyId) {
+        BuyResponseDto buyResponseDto = buyService.getBuyDetail(buyId);
+        log.info("Succeeded in getting buy detail of item : viewer {} => {}", 1, buyResponseDto);
+        ResponseData responseData = ResponseData.builder()
+                .data(buyResponseDto)
+                .build();
+        return ResponseEntity.ok().body(responseData);
+    }
+
     @PostMapping("/{itemId}")
     @ApiOperation(value = "구매폼 생성")
     public ResponseEntity postBuyForm(HttpServletRequest req,
@@ -42,17 +64,6 @@ public class BuyController {
         log.info("Succeeded in deleting buyForm : viewer {} => {}", 1, buyForm);
         ResponseData responseData = ResponseData.builder()
                 .data(buyForm)
-                .build();
-        return ResponseEntity.ok().body(responseData);
-    }
-
-    @GetMapping("")
-    @ApiOperation(value = "구매 목록 조회")
-    public ResponseEntity getBuyList(HttpServletRequest req) {
-        List<BuyResponseDto> buyResponseDtoList = buyService.getBuyList(req);
-        log.info("Succeeded in getting buyList of item : viewer {} => {}", 1, buyResponseDtoList);
-        ResponseData responseData = ResponseData.builder()
-                .data(buyResponseDtoList)
                 .build();
         return ResponseEntity.ok().body(responseData);
     }

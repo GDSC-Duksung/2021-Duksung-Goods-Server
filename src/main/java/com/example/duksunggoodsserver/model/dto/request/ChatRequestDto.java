@@ -1,11 +1,13 @@
 package com.example.duksunggoodsserver.model.dto.request;
 
 import com.example.duksunggoodsserver.model.entity.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Data
 @Getter
 @Setter
 public class ChatRequestDto {

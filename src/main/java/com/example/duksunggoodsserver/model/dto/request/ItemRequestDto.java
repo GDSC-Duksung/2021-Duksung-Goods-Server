@@ -5,17 +5,16 @@ import com.example.duksunggoodsserver.model.entity.DemandSurveyType;
 import com.example.duksunggoodsserver.model.entity.Item;
 import com.example.duksunggoodsserver.model.entity.User;
 import com.sun.istack.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+@Data
 @Getter
 @Setter
 @NoArgsConstructor
@@ -65,6 +64,7 @@ public class ItemRequestDto {
                 .startDate(this.startDate)
                 .endDate(this.endDate)
                 .progress(this.progress)
+                .createdAt(LocalDateTime.now())
                 .category(category)
                 .demandSurveyType(demandSurveyType)
                 .user(user)

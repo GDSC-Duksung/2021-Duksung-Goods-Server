@@ -1,6 +1,7 @@
 package com.example.duksunggoodsserver.model.dto.request;
 
 import com.example.duksunggoodsserver.model.entity.*;
+import com.example.duksunggoodsserver.model.entity.Item;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
+@Data
 @Getter
 @Setter
 @NoArgsConstructor

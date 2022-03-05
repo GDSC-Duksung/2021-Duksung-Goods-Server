@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -36,6 +37,8 @@ public class ItemResponseDto {
     private LocalDate endDate;
 
     private Boolean progress;
+
+    private LocalDateTime createdAt;
 
     private UserResponseDto user;
 

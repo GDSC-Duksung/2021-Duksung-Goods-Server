@@ -3,14 +3,12 @@ package com.example.duksunggoodsserver.model.dto.request;
 import com.example.duksunggoodsserver.model.entity.Community;
 import com.example.duksunggoodsserver.model.entity.Item;
 import com.example.duksunggoodsserver.model.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
+@Data
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

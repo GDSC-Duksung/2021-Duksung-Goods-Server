@@ -6,10 +6,14 @@ import com.example.duksunggoodsserver.model.dto.request.ItemRequestDto;
 import com.example.duksunggoodsserver.model.dto.response.ImageResponseDto;
 import com.example.duksunggoodsserver.model.dto.response.ItemResponseDto;
 import com.example.duksunggoodsserver.model.entity.*;
+import com.example.duksunggoodsserver.model.entity.Item;
+import com.example.duksunggoodsserver.repository.ItemRepository;
 import com.example.duksunggoodsserver.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,6 +38,55 @@ public class ItemService {
     private final UserService userService;
     private final S3Service s3Service;
     private final ModelMapper modelMapper;
+
+    @Transactional
+    public List<ItemResponseDto> getHomeItem() {
+        List<ItemResponseDto> itemResponseDtoList = new ArrayList<>();
+
+        // 성공임박굿즈
+        List<ItemResponseDto> successImminentItem = itemRepository.findSuccessImminentItem()
+                .stream().map(item -> addImagesTo(item))
+                .collect(Collectors.toList());
+        if (successImminentItem.size() == 2) {
+            itemResponseDtoList.add(successImminentItem.get(0));
+            itemResponseDtoList.add(successImminentItem.get(1));
+        } else if (successImminentItem.size() == 1) {
+            itemResponseDtoList.add(successImminentItem.get(0));
+            itemResponseDtoList.add(null);
+        } else {
+            itemResponseDtoList.add(null);
+            itemResponseDtoList.add(null);
+        }
+        // 인기굿즈
+        List<ItemResponseDto> manyLikeItem = itemRepository.findManyLikeItem()
+                .stream().map(item -> addImagesTo(item))
+                .collect(Collectors.toList());
+        if (manyLikeItem.size() == 2) {
+            itemResponseDtoList.add(manyLikeItem.get(0));
+            itemResponseDtoList.add(manyLikeItem.get(1));
+        } else if (manyLikeItem.size() == 1) {
+            itemResponseDtoList.add(manyLikeItem.get(0));
+            itemResponseDtoList.add(null);
+        } else {
+            itemResponseDtoList.add(null);
+            itemResponseDtoList.add(null);
+        }
+        // 신규굿즈
+        List<ItemResponseDto> newItem = itemRepository.findNewItem()
+                .stream().map(item -> addImagesTo(item))
+                .collect(Collectors.toList());
+        if (newItem.size() == 2) {
+            itemResponseDtoList.add(newItem.get(0));
+            itemResponseDtoList.add(newItem.get(1));
+        } else if (newItem.size() == 1) {
+            itemResponseDtoList.add(newItem.get(0));
+            itemResponseDtoList.add(null);
+        } else {
+            itemResponseDtoList.add(null);
+            itemResponseDtoList.add(null);
+        }
+        return itemResponseDtoList;
+    }
 
     @Transactional
     public List<ItemResponseDto> getItemList(HttpServletRequest req) {
@@ -52,8 +106,16 @@ public class ItemService {
     }
 
     @Transactional
-    public List<ItemResponseDto> getAllItems() {
-        List<ItemResponseDto> itemResponseDtoList = itemRepository.findAll()
+    public List<ItemResponseDto> getItemListByDemandSurveyTypeAndCategory(Long demandSurveyTypeId, Long categoryId, int page) {
+        Pageable paging = PageRequest.of(page-1, 10);
+        if (categoryId == 0) { // 카테고리가 All을 뜻함
+            List<ItemResponseDto> itemResponseDtoList = itemRepository.findAllByDemandSurveyTypeIdOrderByCreatedAtDesc(demandSurveyTypeId, paging).getContent()
+                    .stream().map(item -> addImagesTo(item))
+                    .collect(Collectors.toList());
+            return itemResponseDtoList;
+        }
+
+        List<ItemResponseDto> itemResponseDtoList = itemRepository.findAllByDemandSurveyTypeIdAndCategoryIdOrderByCreatedAtDesc(demandSurveyTypeId, categoryId, paging).getContent()
                 .stream().map(item -> addImagesTo(item))
                 .collect(Collectors.toList());
         return itemResponseDtoList;
