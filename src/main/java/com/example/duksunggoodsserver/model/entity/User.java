@@ -9,8 +9,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Data
@@ -37,6 +35,11 @@ public class User {
     private String phoneNumber;
 
     private String address;
+
+    @Column(name = "verification_code")
+    private String verificationCode;
+
+    private boolean enabled;
 
     @NotNull
     @CreatedDate

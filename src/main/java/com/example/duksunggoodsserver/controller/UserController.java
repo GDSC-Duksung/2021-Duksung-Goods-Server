@@ -43,7 +43,7 @@ public class UserController {
             @ApiResponse(code = 400, message = "Something went wrong"), //
             @ApiResponse(code = 403, message = "Access denied"), //
             @ApiResponse(code = 422, message = "Username is already in use")})
-    public ResponseEntity signUp(@ApiParam("Signup User") @RequestBody UserRequestDto user) {
+    public ResponseEntity signUp(@ApiParam("Signup User") @RequestBody UserRequestDto user) throws Exception {
         String jwtToken = userService.signUp(modelMapper.map(user, User.class));
         ResponseData responseData = ResponseData.builder()
                 .data(jwtToken)
@@ -73,5 +73,4 @@ public class UserController {
                 .build();
         return ResponseEntity.ok().body(responseData);
     }
-
 }

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+    <title>회원가입 인증메일</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div align="center" style="font-size: 15px">
+        <img src="https://www.duksung.ac.kr/uploads/CONTENTS/site/duksung/duksung_symbol.png" width="200" alt=""/>
+        <br><br>
+        <p>덕성 굿즈플랫폼 본인인증을 위한 메일입니다.</p>
+        <br>
+        <p>아래의 인증하기 버튼을 클릭하여 인증 부탁드립니다.</p>
+        <form th:action="${verify_url}" method="get">
+            <input type="hidden" name="code" th:value="${code}"/>
+            <button class="btn btn-primary" type="submit">인증하기</button>
+        </form>
+    </div>
+</body>
+</html>
