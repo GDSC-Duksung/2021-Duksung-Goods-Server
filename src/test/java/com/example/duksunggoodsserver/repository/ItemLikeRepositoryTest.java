@@ -1,5 +1,6 @@
 package com.example.duksunggoodsserver.repository;
 
+import com.example.duksunggoodsserver.config.QuerydslTestConfig;
 import com.example.duksunggoodsserver.model.entity.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
@@ -17,6 +19,7 @@ import java.util.Optional;
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(QuerydslTestConfig.class)
 class ItemLikeRepositoryTest {
 
     @Autowired
@@ -41,14 +44,14 @@ class ItemLikeRepositoryTest {
                 .name("name")
                 .createdAt(LocalDateTime.now())
                 .createdBy("ADMIN")
+                .enabled(false)
                 .build();
         return userRepository.save(user);
     }
 
-    public Item saveItem() {
+    public Item saveItem(User user) {
         Category category = categoryRepository.getById(1L);
         DemandSurveyType demandSurveyType = demandSurveyTypeRepository.getById(1L);
-        User user = saveUser();
         Item item = Item.builder()
                 .title("title")
                 .description("description")
@@ -58,6 +61,7 @@ class ItemLikeRepositoryTest {
                 .demandSurveyType(demandSurveyType)
                 .category(category)
                 .user(user)
+                .createdAt(LocalDateTime.now())
                 .build();
         return itemRepository.save(item);
     }
@@ -67,9 +71,7 @@ class ItemLikeRepositoryTest {
     void countAllByItemIdTest() {
         // given
         User user = saveUser();
-
-        Item item = saveItem();
-
+        Item item = saveItem(user);
         ItemLike itemLike = ItemLike.builder()
                 .user(user)
                 .item(item)
@@ -90,9 +92,7 @@ class ItemLikeRepositoryTest {
     void findByUserAndItemTest() {
         // given
         User user = saveUser();
-
-        Item item = saveItem();
-
+        Item item = saveItem(user);
         ItemLike itemLike = ItemLike.builder()
                 .user(user)
                 .item(item)

@@ -19,9 +19,9 @@ public class CustomizedItemRepositoryImpl implements CustomizedItemRepository {
     public List<Item> findSuccessImminentItem() {
         return jpaQueryFactory.select(QItem.item)
                 .from(QBuy.buy)
-                .leftJoin(QItem.item)
+                .join(QItem.item)
                 .on(QBuy.buy.item.id.eq(QItem.item.id))
-                .where(QItem.item.endDate.after(LocalDate.now()))
+                .where(QItem.item.endDate.after(LocalDate.now()).or(QItem.item.endDate.eq(LocalDate.now())))
                 .groupBy(QBuy.buy.item.id)
                 .having(QBuy.buy.count.sum().lt(QItem.item.minNumber))
                 .orderBy((QBuy.buy.count.sum().divide(QItem.item.minNumber)).desc())
@@ -33,9 +33,9 @@ public class CustomizedItemRepositoryImpl implements CustomizedItemRepository {
     public List<Item> findManyLikeItem() {
         return jpaQueryFactory.select(QItem.item)
                 .from(QItemLike.itemLike)
-                .leftJoin(QItem.item)
+                .join(QItem.item)
                 .on(QItemLike.itemLike.item.id.eq(QItem.item.id))
-                .where(QItem.item.endDate.after(LocalDate.now()))
+                .where(QItem.item.endDate.after(LocalDate.now()).or(QItem.item.endDate.eq(LocalDate.now())))
                 .groupBy(QItemLike.itemLike.item.id)
                 .orderBy(QItemLike.itemLike.item.id.count().desc(), QItemLike.itemLike.item.id.desc())
                 .limit(2)
@@ -45,7 +45,7 @@ public class CustomizedItemRepositoryImpl implements CustomizedItemRepository {
     @Override
     public List<Item> findNewItem() {
         return jpaQueryFactory.selectFrom(QItem.item)
-                .where(QItem.item.endDate.after(LocalDate.now()))
+                .where(QItem.item.endDate.after(LocalDate.now()).or(QItem.item.endDate.eq(LocalDate.now())))
                 .orderBy(QItem.item.createdAt.desc(), QItem.item.id.desc())
                 .limit(2)
                 .fetch();
