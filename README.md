@@ -9,6 +9,14 @@
     * 굿즈에 대해 이야기할 수 있는 커뮤니티 공간 제공
     * 1:1 또는 1:N 실시간 채팅
 
+## 기술 스택
+- Java 11
+- Spring Boot 2.5.4
+- Spring Data JPA + Querydsl
+- Gradle
+- MySQL
+- Junit5 + Mockito
+
 ## 서비스 구성도
 ![덕성굿즈구성도](https://user-images.githubusercontent.com/43838022/158007600-abd23dcb-c160-4269-8be9-4b2698b0de5a.png)
 
