@@ -15,12 +15,12 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/item")
+@RequestMapping("/api/items")
 public class ItemLikeController {
 
     private final ItemLikeService itemLikeService;
 
-    @GetMapping("/like")
+    @GetMapping("/likes")
     @ApiOperation(value = "찜 조회")
     public ResponseEntity getItemLike(HttpServletRequest req) {
         List<ItemLike> itemLikeList = itemLikeService.getItemLike(req);
@@ -31,7 +31,7 @@ public class ItemLikeController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @GetMapping("{itemId}/like/count")
+    @GetMapping("{itemId}/likes/count")
     @ApiOperation(value = "아이템의 찜 갯수 조회")
     public ResponseEntity getCountOfItemLike(@PathVariable Long itemId) {
         Long count = itemLikeService.getCountOfItemLike(itemId);
@@ -42,7 +42,7 @@ public class ItemLikeController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @PostMapping("/{itemId}/like")
+    @PostMapping("/{itemId}/likes")
     @ApiOperation(value = "찜 생성 / 삭제")
     public ResponseEntity postItemLike(HttpServletRequest req, @PathVariable Long itemId) {
         boolean result = itemLikeService.changeItemLike(req, itemId);

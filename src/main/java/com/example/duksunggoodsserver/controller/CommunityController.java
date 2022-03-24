@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/item")
+@RequestMapping("/api/items")
 public class CommunityController {
     private final CommunityService communityService;
 
@@ -32,7 +32,7 @@ public class CommunityController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @PostMapping("/{itemId}/community")
+    @PostMapping("/{itemId}/communities")
     @ApiOperation(value = "커뮤니티 생성")
     public ResponseEntity postCommunity(HttpServletRequest req,
                                         @PathVariable Long itemId,
@@ -45,10 +45,10 @@ public class CommunityController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @DeleteMapping("/community/{id}")
+    @DeleteMapping("/communities/{communityId}")
     @ApiOperation(value = "커뮤니티 삭제")
-    public ResponseEntity deleteCommunity(@PathVariable Long id) {
-        Long community = communityService.deleteCommunity(id);
+    public ResponseEntity deleteCommunity(@PathVariable Long communityId) {
+        Long community = communityService.deleteCommunity(communityId);
         log.info("Succeeded in deleting community of item : viewer {} => {}", 1, community);
         ResponseData responseData = ResponseData.builder()
                 .data(community)

@@ -45,7 +45,7 @@ class CommunityControllerTest {
                 .build();
 
         // when
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/item/1/community")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/items/1/communities")
                         .content(gson.toJson(communityRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isBadRequest());

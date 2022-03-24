@@ -64,13 +64,13 @@
         },
         methods: {
             findUser: function() {
-                axios.get('/api/user/me').then(response => { this.sender = response.data.data.nickname; this.senderId = response.data.data.id });
+                axios.get('/api/users/me').then(response => { this.sender = response.data.data.nickname; this.senderId = response.data.data.id });
             },
             findRoom: function() {
-                axios.get('/api/chat/room/'+this.roomUUID).then(response => { this.room = response.data.data; });
+                axios.get('/api/chat-rooms/'+this.roomUUID).then(response => { this.room = response.data.data; });
             },
             getAllMessage:function() {
-                axios.get('/api/chat/'+this.roomUUID).then(response => {
+                axios.get('/api/chat-rooms/'+this.roomUUID+'/chats').then(response => {
                     this.messages = response.data.data.map(message => {
                         if (message.type == 'ENTER')
                             message.sender = '[알림]';
@@ -79,7 +79,7 @@
                 });
             },
             sendMessage: function() {
-                ws.send("/pub/chat/message", {}, JSON.stringify({type:'TALK', roomUUID:this.roomUUID, sender:this.sender, senderId: this.senderId, message:this.message}));
+                ws.send("/pub/chats/messages", {}, JSON.stringify({type:'TALK', roomUUID:this.roomUUID, sender:this.sender, senderId: this.senderId, message:this.message}));
                 this.message = '';
             },
             recvMessage: function(recv) {
@@ -89,12 +89,12 @@
     });
     // pub/sub event
     ws.connect({}, function(frame) {
-        ws.subscribe("/sub/chat/room/"+vm.$data.roomUUID, function(message) {
+        ws.subscribe("/sub/chat-rooms/"+vm.$data.roomUUID, function(message) {
             var recv = JSON.parse(message.body);
             if (Object.keys(recv.message).length !== 0)
                 vm.recvMessage(recv);
         });
-        ws.send("/pub/chat/message", {}, JSON.stringify({type:'ENTER', roomUUID:vm.$data.roomUUID, senderId: vm.$data.senderId, sender:vm.$data.sender}));
+        ws.send("/pub/chats/messages", {}, JSON.stringify({type:'ENTER', roomUUID:vm.$data.roomUUID, senderId: vm.$data.senderId, sender:vm.$data.sender}));
     }, function(error) {
         alert("error "+error);
     });

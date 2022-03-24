@@ -22,7 +22,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/sell")
+@RequestMapping("/api/sell-items")
 public class SellController {
 
     private final ItemService itemService;

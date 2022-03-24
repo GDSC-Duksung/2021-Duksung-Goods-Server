@@ -17,15 +17,15 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/community")
+@RequestMapping("/api/communities")
 public class CommentController {
 
     private final CommentService commentService;
 
-    @GetMapping("/{id}/comments")
+    @GetMapping("/{communityId}/comments")
     @ApiOperation(value = "댓글 조회")
-    public ResponseEntity getCommentList(@PathVariable Long id) {
-        List<CommentResponseDto> commentResponseDtoList = commentService.getCommentList(id);
+    public ResponseEntity getCommentList(@PathVariable Long communityId) {
+        List<CommentResponseDto> commentResponseDtoList = commentService.getCommentList(communityId);
         log.info("Succeeded in getting comments of community : viewer {} => {}", 1, commentResponseDtoList);
         ResponseData responseData = ResponseData.builder()
                 .data(commentResponseDtoList)
@@ -33,12 +33,12 @@ public class CommentController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @PostMapping("/{id}/comment")
+    @PostMapping("/{communityId}/comments")
     @ApiOperation(value = "댓글 생성")
     public ResponseEntity postComment(HttpServletRequest req,
-                                      @PathVariable Long id,
+                                      @PathVariable Long communityId,
                                       @Valid @RequestBody CommentRequestDto commentRequestDto) {
-        CommentResponseDto commentResponseDto = commentService.saveComment(req, id, commentRequestDto);
+        CommentResponseDto commentResponseDto = commentService.saveComment(req, communityId, commentRequestDto);
         log.info("Succeeded in posting comment of community : viewer {} => {}", 1, commentResponseDto);
         ResponseData responseData = ResponseData.builder()
                 .data(commentResponseDto)
@@ -46,10 +46,10 @@ public class CommentController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @DeleteMapping("/comment/{id}")
+    @DeleteMapping("/comments/{commentId}")
     @ApiOperation(value = "댓글 삭제")
-    public ResponseEntity deleteComment(@PathVariable Long id) {
-        Long comment = commentService.deleteComment(id);
+    public ResponseEntity deleteComment(@PathVariable Long commentId) {
+        Long comment = commentService.deleteComment(commentId);
         log.info("Succeeded in deleting comment of community : viewer {} => {}", 1, comment);
         ResponseData responseData = ResponseData.builder()
                 .data(comment)

@@ -7,17 +7,14 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/item")
+@RequestMapping("/api/items")
 public class ItemController {
 
     private final ItemService itemService;
@@ -33,10 +30,10 @@ public class ItemController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @GetMapping("/detail/{id}")
+    @GetMapping("/{itemId}")
     @ApiOperation(value = "굿즈 상세정보 조회")
-    public ResponseEntity getItemDetail(@PathVariable Long id) {
-        ItemResponseDto itemResponseDto = itemService.getItemDetail(id);
+    public ResponseEntity getItemDetail(@PathVariable Long itemId) {
+        ItemResponseDto itemResponseDto = itemService.getItemDetail(itemId);
         log.info("Succeeded in getting detailed item : viewer {} => {}", 1, itemResponseDto);
         ResponseData responseData = ResponseData.builder()
                 .data(itemResponseDto)
@@ -44,9 +41,9 @@ public class ItemController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @GetMapping("/demandSurveyType/{demandSurveyTypeId}/category/{categoryId}/{page}")
+    @GetMapping("/demand-survey-type/{demandSurveyTypeId}/category/{categoryId}")
     @ApiOperation(value = "수요조사별 및 카테고리별 굿즈 조회")
-    public ResponseEntity getItemListByDemandSurveyTypeAndCategory(@PathVariable Long demandSurveyTypeId, @PathVariable Long categoryId, @PathVariable int page) {
+    public ResponseEntity getItemListByDemandSurveyTypeAndCategory(@PathVariable Long demandSurveyTypeId, @PathVariable Long categoryId, @RequestParam int page) {
         List<ItemResponseDto> itemResponseDtoList = itemService.getItemListByDemandSurveyTypeAndCategory(demandSurveyTypeId, categoryId, page);
         log.info("Succeeded in getting items by demandSurveyType and category : viewer {} => {}", 1, itemResponseDtoList);
         ResponseData responseData = ResponseData.builder()

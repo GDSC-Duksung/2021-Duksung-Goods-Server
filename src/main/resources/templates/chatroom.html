@@ -52,7 +52,7 @@
         },
         methods: {
             findAllRoom: function() {
-                axios.get('/api/chat/rooms').then(response => { this.chatrooms = response.data.data; });
+                axios.get('/api/chat-rooms').then(response => { this.chatrooms = response.data.data; });
             },
             createRoom: function() {
                 if("" === this.room_name) {
@@ -61,7 +61,7 @@
                 } else {
                     var name = this.room_name
                     var userIdList = [];
-                    axios.post('/api/chat/room', {
+                    axios.post('/api/chat-rooms', {
                         name: name,
                         userIdList: userIdList },
                         { headers: { "Content-Type": `application/json`}})
@@ -77,7 +77,7 @@
             },
             enterRoom: function(roomUUID) {
                 localStorage.setItem('wschat.roomUUID',roomUUID);
-                location.href="/api/chat/room/enter/"+roomUUID;
+                location.href="/view/chat-rooms/"+roomUUID;
             }
         }
     });

@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("/view/users")
 public class UserViewController {
     private final UserService userService;
 
-    @GetMapping("/verify")
+    @GetMapping("/verification")
     public String verifyUser(@RequestParam("code") String code) {
         boolean isEnabled = userService.verify(code);
         if (isEnabled)

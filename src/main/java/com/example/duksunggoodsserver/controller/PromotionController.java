@@ -21,13 +21,13 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/promotions")
+@RequestMapping("/api")
 public class PromotionController {
 
     private final PromotionService promotionService;
     private final S3Service s3Service;
 
-    @GetMapping("/")
+    @GetMapping("/promotions")
     @ApiOperation(value = "모든 배너 조회")
     public ResponseEntity getAllPromotions(){
         List<PromotionResponseDto> promotionResponseDtoList = promotionService.getAllPromotions();
@@ -38,10 +38,10 @@ public class PromotionController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/promotions/{promotionId}")
     @ApiOperation(value = "배너 1개 조회")
-    public ResponseEntity getPromotion(@PathVariable Long id){
-        PromotionResponseDto promotionResponseDto = promotionService.getPromotion(id);
+    public ResponseEntity getPromotion(@PathVariable Long promotionId){
+        PromotionResponseDto promotionResponseDto = promotionService.getPromotion(promotionId);
         log.info("Succeeded in getting promotion : viewer {} => {}", 1, promotionResponseDto);
         ResponseData responseData = ResponseData.builder()
                 .data(promotionResponseDto)
@@ -49,10 +49,10 @@ public class PromotionController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("items/{itemId}/promotions")
     @ApiOperation(value = "배너 생성")
     public ResponseEntity createPromotion(HttpServletRequest req,
-                                          @PathVariable Long id,
+                                          @PathVariable Long itemId,
                                           @RequestPart MultipartFile file,
                                           @Valid @RequestPart PromotionRequestDto promotionRequestDto) throws IOException {
         if (file != null) {
@@ -60,7 +60,7 @@ public class PromotionController {
             promotionRequestDto.setImage(imgPath);
         }
 
-        PromotionResponseDto promotionResponseDto = promotionService.createPromotion(req, id, promotionRequestDto);
+        PromotionResponseDto promotionResponseDto = promotionService.createPromotion(req, itemId, promotionRequestDto);
         log.info("Succeeded in posting promotion : viewer {} => {}", 1, promotionResponseDto);
         ResponseData responseData = ResponseData.builder()
                 .data(promotionResponseDto)
@@ -68,10 +68,10 @@ public class PromotionController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/promotions/{promotionId}")
     @ApiOperation(value = "배너 삭제")
-    public ResponseEntity deletePromotion(@PathVariable Long id) throws UnsupportedEncodingException {
-        Long promotion = promotionService.deletePromotion(id);
+    public ResponseEntity deletePromotion(@PathVariable Long promotionId) throws UnsupportedEncodingException {
+        Long promotion = promotionService.deletePromotion(promotionId);
         log.info("Succeeded in deleting promotion : viewer {} => {}", 1, promotion);
         ResponseData responseData = ResponseData.builder()
                 .data(promotion)

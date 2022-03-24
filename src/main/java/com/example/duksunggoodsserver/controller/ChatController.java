@@ -28,19 +28,19 @@ public class ChatController {
     private final SimpMessageSendingOperations messagingTemplate;
     private final ChatService chatService;
 
-    @MessageMapping("/chat/message")
+    @MessageMapping("/chats/messages")
     public void message(ChatRequestDto chatRequestDto) {
         chatRequestDto.setTime(LocalDateTime.now().withNano(0));
         if (MessageType.ENTER.equals(chatRequestDto.getType()) && !chatService.existEnterChat(chatRequestDto.getSenderId(), chatRequestDto.getRoomUUID()))
             chatRequestDto.setMessage(chatRequestDto.getSender() + "님이 입장하셨습니다.");
-        messagingTemplate.convertAndSend("/sub/chat/room/" + chatRequestDto.getRoomUUID(), chatRequestDto);
+        messagingTemplate.convertAndSend("/sub/chat-rooms/" + chatRequestDto.getRoomUUID(), chatRequestDto);
 
         // 입장 관련 채팅은 한 번만 저장
         if (!MessageType.ENTER.equals(chatRequestDto.getType()) || !chatService.existEnterChat(chatRequestDto.getSenderId(), chatRequestDto.getRoomUUID()))
             chatService.saveChat(chatRequestDto);
     }
 
-    @GetMapping("/api/chat/{roomUUID}")
+    @GetMapping("/api/chat-rooms/{roomUUID}/chats")
     @ResponseBody
     @ApiOperation(value = "채팅룸에 채팅 조회")
     public ResponseEntity getChatListInChatRoom(HttpServletRequest req, @PathVariable String roomUUID) {

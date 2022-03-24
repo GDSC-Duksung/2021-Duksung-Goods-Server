@@ -17,12 +17,12 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/chat")
+@RequestMapping("/api/chat-rooms")
 public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
 
-    @GetMapping("/rooms")
+    @GetMapping("")
     @ApiOperation(value = "채팅방 리스트 조회")
     public ResponseEntity getChatRoomList(HttpServletRequest req) {
         List<ChatRoomResponseDto> chatRoomResponseDtoList = chatRoomService.getChatRoomList(req);
@@ -33,7 +33,7 @@ public class ChatRoomController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @GetMapping("/room/{roomUUID}")
+    @GetMapping("/{roomUUID}")
     @ApiOperation(value = "채팅방 1개 조회")
     public ResponseEntity getChatRoom(@PathVariable String roomUUID) {
         ChatRoomResponseDto chatRoomResponseDto = chatRoomService.getChatRoom(roomUUID);
@@ -44,7 +44,7 @@ public class ChatRoomController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @PostMapping("/room")
+    @PostMapping("")
     @ApiOperation(value = "1:N 채팅방 생성")
     public ResponseEntity createChatRoom(HttpServletRequest req, @RequestBody ChatRoomRequestDto chatRoomRequestDto) {
         ChatRoomResponseDto chatRoomResponseDto = chatRoomService.createChatRoom(req, chatRoomRequestDto.getName(), chatRoomRequestDto.getUserIdList());
@@ -55,7 +55,7 @@ public class ChatRoomController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @PostMapping("/room/{roomId}/{userId}")
+    @PostMapping("/{roomId}/{userId}")
     @ApiOperation(value = "채팅방 유저 추가")
     public ResponseEntity addUserToChatRoom(@PathVariable Long roomId, @PathVariable Long userId) {
         ChatRoomJoinResponseDto chatRoomJoinResponseDto = chatRoomService.addUserToChatRoom(roomId, userId);
@@ -66,7 +66,7 @@ public class ChatRoomController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @DeleteMapping("/room/{roomId}")
+    @DeleteMapping("/{roomId}")
     @ApiOperation(value = "채팅방 나가기")
     public ResponseEntity deleteUserFromChatRoom(HttpServletRequest req, @PathVariable Long roomId) {
         Long chatRoomId = chatRoomService.deleteUserFromChatRoom(req, roomId);

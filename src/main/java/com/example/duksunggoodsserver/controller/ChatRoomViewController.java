@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/api/chat")
+@RequestMapping("/view/chat-rooms")
 public class ChatRoomViewController {
 
-    @GetMapping("/")
+    @GetMapping("")
     public String chatRoomList() {
         return "chatroom";
     }
 
-    @GetMapping("/room/enter/{roomUUID}")
+    @GetMapping("/{roomUUID}")
     public String roomDetail(@PathVariable String roomUUID, Model model) {
         model.addAttribute("roomUUID", roomUUID);
         return "roomdetail";

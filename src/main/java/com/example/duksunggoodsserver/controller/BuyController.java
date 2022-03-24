@@ -17,12 +17,12 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/buy")
+@RequestMapping("/api")
 public class BuyController {
 
     private final BuyService buyService;
 
-    @GetMapping("")
+    @GetMapping("/buy-items")
     @ApiOperation(value = "구매 목록 조회")
     public ResponseEntity getBuyList(HttpServletRequest req) {
         List<BuyResponseDto> buyResponseDtoList = buyService.getBuyList(req);
@@ -33,7 +33,7 @@ public class BuyController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @GetMapping("/{buyId}")
+    @GetMapping("/buy-items/{buyId}")
     @ApiOperation(value = "구매 목록 상세 조회")
     public ResponseEntity getBuyDetail(@PathVariable Long buyId) {
         BuyResponseDto buyResponseDto = buyService.getBuyDetail(buyId);
@@ -44,7 +44,7 @@ public class BuyController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @PostMapping("/{itemId}")
+    @PostMapping("items/{itemId}/buy-items")
     @ApiOperation(value = "구매폼 생성")
     public ResponseEntity postBuyForm(HttpServletRequest req,
                                       @PathVariable Long itemId,
@@ -57,7 +57,7 @@ public class BuyController {
         return ResponseEntity.ok().body(responseData);
     }
 
-    @DeleteMapping("/{buyId}")
+    @DeleteMapping("/buy-items/{buyId}")
     @ApiOperation(value = "구매폼 삭제")
     public ResponseEntity deleteBuyForm(@PathVariable Long buyId) {
         Long buyForm = buyService.deleteBuyForm(buyId);

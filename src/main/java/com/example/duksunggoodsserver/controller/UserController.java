@@ -18,14 +18,14 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
     private final ModelMapper modelMapper;
 
-    @PostMapping("/signin")
-    @ApiOperation(value = "${UserController.signIn}")
+    @PostMapping("/login")
+    @ApiOperation(value = "${UserController.login}")
     @ApiResponses(value = {//
             @ApiResponse(code = 400, message = "Something went wrong"), //
             @ApiResponse(code = 422, message = "Invalid email/password supplied")})
