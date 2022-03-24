@@ -25,4 +25,4 @@
 ![duksunggoodserd](https://user-images.githubusercontent.com/43838022/158006967-fc0afd21-ae5c-444e-ab31-1823f1741178.png)
 
 ## API
-![DuksungGoods Swagger UI](https://user-images.githubusercontent.com/43838022/158007003-7dab5377-47ee-401d-8a88-8a57c1d2072b.png)
+![DuksungGoods Swagger UI](https://user-images.githubusercontent.com/43838022/159965327-6e372cbb-0c69-414d-b498-15caf71e99b3.png)
