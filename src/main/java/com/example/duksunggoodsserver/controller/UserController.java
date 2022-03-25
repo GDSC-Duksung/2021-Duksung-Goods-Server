@@ -25,7 +25,7 @@ public class UserController {
     private final ModelMapper modelMapper;
 
     @PostMapping("/login")
-    @ApiOperation(value = "${UserController.login}")
+    @ApiOperation(value = "로그인")
     @ApiResponses(value = {//
             @ApiResponse(code = 400, message = "Something went wrong"), //
             @ApiResponse(code = 422, message = "Invalid email/password supplied")})
@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    @ApiOperation(value = "${UserController.signUp}")
+    @ApiOperation(value = "회원가입")
     @ApiResponses(value = {//
             @ApiResponse(code = 400, message = "Something went wrong"), //
             @ApiResponse(code = 403, message = "Access denied"), //
@@ -52,7 +52,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/me")
-    @ApiOperation(value = "${UserController.me}", response = UserResponseDto.class, authorizations = { @Authorization(value="apiKey") })
+    @ApiOperation(value = "사용자 정보 조회", response = UserResponseDto.class, authorizations = { @Authorization(value="apiKey") })
     @ApiResponses(value = {//
             @ApiResponse(code = 400, message = "Something went wrong"), //
             @ApiResponse(code = 403, message = "Access denied"), //
@@ -66,6 +66,7 @@ public class UserController {
     }
 
     @GetMapping("/refresh")
+    @ApiOperation(value = "토큰 갱신")
     public ResponseEntity refresh(HttpServletRequest req) {
         String refreshToken = userService.refresh(req.getRemoteUser());
         ResponseData responseData = ResponseData.builder()
