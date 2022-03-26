@@ -24,4 +24,18 @@ public class BuyResponseDto {
     private boolean deposit;
 
     private LocalDateTime createdAt;
+
+    private String name;
+
+    private String phoneNumber;
+
+    private String email;
+
+    private String address;
+
+    private Integer zipCode;
+
+    private String extra;
+
+    private String refundAccountNumber;
 }

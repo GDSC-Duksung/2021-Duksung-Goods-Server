@@ -20,10 +20,31 @@ public class BuyRequestDto {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    private String name;
+
+    private String phoneNumber;
+
+    private String email;
+
+    private String address;
+
+    private Integer zipCode;
+
+    private String extra;
+
+    private String refundAccountNumber;
+
     public Buy toBuyEntity(Item item, User user) {
         return Buy.builder()
                 .item(item)
                 .count(this.count)
+                .name(this.name)
+                .phoneNumber(this.phoneNumber)
+                .email(this.email)
+                .address(this.address)
+                .zipCode(this.zipCode)
+                .extra(this.extra)
+                .refundAccountNumber(this.refundAccountNumber)
                 .deposit(false)
                 .createdAt(this.createdAt)
                 .user(user)
