@@ -17,9 +17,11 @@
 - Gradle
 - MySQL
 - Junit5 + Mockito
+- Jenkins
+- NGINX
 
 ## 서비스 구성도
-![덕성굿즈구성도](https://user-images.githubusercontent.com/43838022/160760342-8b1c0ecc-f82f-4bb1-b5a2-1a1a3ac5efdd.png)
+![덕성굿즈구성도](https://user-images.githubusercontent.com/43838022/160877475-72b95d8c-e33c-4a5c-b2ba-d13ca45f0cf1.png)
 
 ## ERD
 ![erd](https://user-images.githubusercontent.com/43838022/160760512-5c0d70f2-d7de-4a3c-ad57-de2dab0e83aa.png)
