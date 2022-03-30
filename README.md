@@ -19,10 +19,10 @@
 - Junit5 + Mockito
 
 ## 서비스 구성도
-![덕성굿즈구성도](https://user-images.githubusercontent.com/43838022/158007600-abd23dcb-c160-4269-8be9-4b2698b0de5a.png)
+![덕성굿즈구성도](https://user-images.githubusercontent.com/43838022/160760342-8b1c0ecc-f82f-4bb1-b5a2-1a1a3ac5efdd.png)
 
 ## ERD
-![duksunggoodserd](https://user-images.githubusercontent.com/43838022/158006967-fc0afd21-ae5c-444e-ab31-1823f1741178.png)
+![erd](https://user-images.githubusercontent.com/43838022/160760512-5c0d70f2-d7de-4a3c-ad57-de2dab0e83aa.png)
 
 ## API
 ![DuksungGoods Swagger UI](https://user-images.githubusercontent.com/43838022/159965327-6e372cbb-0c69-414d-b498-15caf71e99b3.png)
