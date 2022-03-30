@@ -46,7 +46,9 @@ public class SwaggerConfig {
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.example.duksunggoodsserver"))
                 .paths(PathSelectors.any())
-                .build();
+                .build()
+                .securityContexts(Arrays.asList(securityContext()))
+                .securitySchemes(Arrays.asList(apiKey()));
     }
 
     public ApiInfo apiInfo() {
@@ -64,7 +66,7 @@ public class SwaggerConfig {
     private SecurityContext securityContext() {
         return SecurityContext.builder()
                 .securityReferences(defaultAuth())
-                .forPaths(PathSelectors.any())
+                .forPaths(PathSelectors.regex(".*(buy-items|sell-items|chat-rooms|communities|comments|items|users/me|users/refresh|likes|promotions/).*"))
                 .build();
     }
 

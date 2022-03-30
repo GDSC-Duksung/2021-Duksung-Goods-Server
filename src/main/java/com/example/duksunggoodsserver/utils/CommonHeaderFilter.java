@@ -1,4 +1,4 @@
-package com.example.duksunggoodsserver.config;
+package com.example.duksunggoodsserver.utils;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
