@@ -4,10 +4,12 @@ import com.example.duksunggoodsserver.exception.CustomException;
 import com.example.duksunggoodsserver.model.entity.User;
 import com.example.duksunggoodsserver.repository.UserRepository;
 import com.example.duksunggoodsserver.security.JwtTokenProvider;
+import com.example.duksunggoodsserver.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,6 +21,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
+import java.net.MalformedURLException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
@@ -34,8 +37,11 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final JavaMailSender emailSender;
     private final SpringTemplateEngine templateEngine;
+    private final RedisUtil redisUtil;
     @Value("${mail.verify-url}")
     private String verifyUrl;
+    @Value("${mail.valid-time}")
+    private Long validTime;
 
     public String signIn(String email, String password) {
         try {
@@ -51,11 +57,10 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setCreatedAt(LocalDateTime.now());
             user.setCreatedBy(user.getNickname());
-            user.setVerificationCode(createCode());
             user.setEnabled(false);
             userRepository.save(user);
 
-            sendVerificationMail(user.getEmail(), user.getVerificationCode());
+            sendVerificationMail(user.getEmail());
 
             return jwtTokenProvider.createToken(user.getEmail());
         } else {
@@ -79,14 +84,22 @@ public class UserService {
         return jwtTokenProvider.createToken(username);
     }
 
-    public void sendVerificationMail(String email, String code) throws Exception {
-        MimeMessage message = emailSender.createMimeMessage();
+    public boolean sendVerificationMail(String email) {
+        try{
+            String code = createCode();
+            redisUtil.setDataExpiration(code, email, validTime);
+            MimeMessage message = emailSender.createMimeMessage();
 
-        message.addRecipients(MimeMessage.RecipientType.TO, email); // 보낼 이메일 설정
-        message.setSubject("[인증 메일]덕성 굿즈플랫폼"); // 이메일 제목
-        message.setText(setContext(code, verifyUrl), "utf-8", "html"); // 내용 설정(Template Process)
+            message.addRecipients(MimeMessage.RecipientType.TO, email); // 보낼 이메일 설정
+            message.setSubject("[인증 메일]덕성 굿즈플랫폼"); // 이메일 제목
+            message.setText(setContext(code, verifyUrl), "utf-8", "html"); // 내용 설정(Template Process)
 
-        emailSender.send(message); // 이메일 전송
+            emailSender.send(message); // 이메일 전송
+            return true;
+        } catch(Exception e) {
+            log.info(String.valueOf(e));
+            throw new MailSendException("Failed to send email");
+        }
     }
 
     private String setContext(String code, String verifyUrl) { // 타임리프 설정하는 코드
@@ -117,11 +130,15 @@ public class UserService {
     }
 
     public boolean verify(String code) {
-        Optional<User> user = Optional.ofNullable(userRepository.findByVerificationCode(code)
-                .orElseThrow(() -> new CustomException("The user doesn't exist", HttpStatus.NOT_FOUND)));
-        user.get().setVerificationCode(null);
-        user.get().setEnabled(true);
-        userRepository.save(user.get());
-        return true;
+        Optional<String> email = Optional.ofNullable(redisUtil.getData(code));
+        if (email.isPresent()) {
+            Optional<User> user = Optional.ofNullable(userRepository.findByEmail(email.get())
+                    .orElseThrow(() -> new CustomException("The user doesn't exist", HttpStatus.NOT_FOUND)));
+            user.get().setEnabled(true);
+            userRepository.save(user.get());
+            return true;
+        } else {
+            return false;
+        }
     }
 }

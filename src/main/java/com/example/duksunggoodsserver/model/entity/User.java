@@ -36,9 +36,6 @@ public class User {
 
     private String address;
 
-    @Column(name = "verification_code")
-    private String verificationCode;
-
     private boolean enabled;
 
     @NotNull

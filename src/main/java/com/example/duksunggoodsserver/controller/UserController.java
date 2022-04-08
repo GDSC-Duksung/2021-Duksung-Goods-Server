@@ -51,6 +51,19 @@ public class UserController {
         return ResponseEntity.ok().body(responseData);
     }
 
+    @PostMapping("/sendmail")
+    @ApiOperation(value = "인증 메일 재전송")
+    @ApiResponses(value = {//
+            @ApiResponse(code = 400, message = "Something went wrong"), //
+            @ApiResponse(code = 422, message = "Verification code is expired")})
+    public ResponseEntity sendEmail(@RequestBody UserRequestDto user) {
+        boolean result = userService.sendVerificationMail(user.getEmail());
+        ResponseData responseData = ResponseData.builder()
+                .data(result)
+                .build();
+        return ResponseEntity.ok().body(responseData);
+    }
+
     @GetMapping(value = "/me")
     @ApiOperation(value = "사용자 정보 조회", response = UserResponseDto.class, authorizations = { @Authorization(value="apiKey") })
     @ApiResponses(value = {//
