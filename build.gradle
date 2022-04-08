@@ -9,6 +9,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
     id 'java'
+    id 'jacoco'
 }
 
 group = 'com.example'
@@ -68,6 +69,8 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
     implementation "com.querydsl:querydsl-core:${queryDslVersion}"
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     // AWS S3
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
