@@ -63,6 +63,17 @@ public class SellController {
         return ResponseEntity.ok().body(responseData);
     }
 
+    @PatchMapping("/{itemId}/{progress}")
+    @ApiOperation(value = "굿즈 진행 상태 변경")
+    public ResponseEntity changeProgress(@PathVariable Long itemId, @PathVariable Long progress) {
+        ItemResponseDto itemResponseDto = itemService.changeProgress(itemId, progress);
+        log.info("Succeeded in changing item progress : viewer {} => {}", 1, itemResponseDto);
+        ResponseData responseData = ResponseData.builder()
+                .data(itemResponseDto)
+                .build();
+        return ResponseEntity.ok().body(responseData);
+    }
+
     @GetMapping("/{itemId}")
     @ApiOperation(value = "입금 목록 조회", notes = "내 판매 아이템의 입금 목록을 조회한다.")
     public ResponseEntity getDepositList(@PathVariable Long itemId) {

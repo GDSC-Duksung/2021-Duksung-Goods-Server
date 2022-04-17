@@ -39,7 +39,7 @@ public class Item {
     @NotNull
     private LocalDate endDate;
 
-    private Boolean progress;
+    private Long progress;
 
     @NotNull
     @CreatedDate

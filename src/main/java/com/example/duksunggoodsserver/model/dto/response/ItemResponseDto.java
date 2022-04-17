@@ -36,7 +36,7 @@ public class ItemResponseDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
-    private Boolean progress;
+    private Long progress;
 
     private LocalDateTime createdAt;
 

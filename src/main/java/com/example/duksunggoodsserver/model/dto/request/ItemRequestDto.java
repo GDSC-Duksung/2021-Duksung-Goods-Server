@@ -44,7 +44,7 @@ public class ItemRequestDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
-    private Boolean progress;
+    private Long progress;
 
     @Min(1)
     @Max(4)
@@ -54,7 +54,7 @@ public class ItemRequestDto {
     @Max(2)
     private Long demandSurveyTypeId;
 
-    public Item toItemEntity(User user, Category category, DemandSurveyType demandSurveyType) {
+    public Item toItemEntity(User user, Category category, DemandSurveyType demandSurveyType, Long progress) {
         return Item.builder()
                 .title(this.title)
                 .description(this.description)
@@ -63,7 +63,7 @@ public class ItemRequestDto {
                 .maxNumber(this.maxNumber)
                 .startDate(this.startDate)
                 .endDate(this.endDate)
-                .progress(this.progress)
+                .progress(progress)
                 .createdAt(LocalDateTime.now())
                 .category(category)
                 .demandSurveyType(demandSurveyType)

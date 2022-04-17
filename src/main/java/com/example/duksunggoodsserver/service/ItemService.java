@@ -139,7 +139,10 @@ public class ItemService {
         Optional<DemandSurveyType> demandSurveyType = Optional.ofNullable(demandSurveyTypeRepository.findById(itemRequestDto.getDemandSurveyTypeId())
                 .orElseThrow(() -> new ResourceNotFoundException("demandSurveyType", "demandSurveyTypeId", itemRequestDto.getDemandSurveyTypeId())));
 
-        Item item = itemRepository.save(itemRequestDto.toItemEntity(user.get(), category.get(), demandSurveyType.get()));
+        Long progress = 0L;
+        if (itemRequestDto.getDemandSurveyTypeId() == 2L) progress = 20L;
+
+        Item item = itemRepository.save(itemRequestDto.toItemEntity(user.get(), category.get(), demandSurveyType.get(), progress));
 
         if (files != null) {
             for (MultipartFile file: files) {
@@ -177,6 +180,21 @@ public class ItemService {
         }
         itemRepository.deleteById(itemId);
         return itemId;
+    }
+
+    @Transactional
+    public ItemResponseDto changeProgress(Long itemId, Long progress) {
+
+        Optional<Item> item = Optional.ofNullable(itemRepository.findById(itemId)
+                .orElseThrow(() -> new ResourceNotFoundException("item", "itemId", itemId)));
+
+        if (item.get().getProgress() != progress) {
+            item.get().setProgress(progress);
+            ItemResponseDto itemResponseDto = modelMapper.map(item.get(), ItemResponseDto.class);
+            return itemResponseDto;
+        }
+
+        return null;
     }
 
     public ItemResponseDto addImagesTo(Item item) {
