@@ -35,6 +35,7 @@ public class ItemService {
     private final CategoryRepository categoryRepository;
     private final DemandSurveyTypeRepository demandSurveyTypeRepository;
     private final ImageRepository imageRepository;
+    private final BuyRepository buyRepository;
     private final UserService userService;
     private final S3Service s3Service;
     private final ModelMapper modelMapper;
@@ -92,7 +93,10 @@ public class ItemService {
     public List<ItemResponseDto> getItemList(HttpServletRequest req) {
         Optional<User> user = userService.getCurrentUser(req);
         List<ItemResponseDto> itemResponseDtoList = itemRepository.findAllByUserId(user.get().getId())
-                .stream().map(item -> addImagesTo(item))
+                .stream().map(item -> {
+                    ItemResponseDto itemResponseDto = addImagesTo(item);
+                    return addPercentageTo(itemResponseDto);
+                })
                 .collect(Collectors.toList());
         return itemResponseDtoList;
     }
@@ -102,7 +106,7 @@ public class ItemService {
         Optional<Item> item = Optional.ofNullable(itemRepository.findById(itemId)
                 .orElseThrow(() -> new ResourceNotFoundException("item", "itemId", itemId)));
         ItemResponseDto itemResponseDto = addImagesTo(item.get());
-        return itemResponseDto;
+        return addPercentageTo(itemResponseDto);
     }
 
     @Transactional
@@ -110,13 +114,19 @@ public class ItemService {
         Pageable paging = PageRequest.of(page-1, 10);
         if (categoryId == 0) { // 카테고리가 All을 뜻함
             List<ItemResponseDto> itemResponseDtoList = itemRepository.findAllByDemandSurveyTypeIdOrderByCreatedAtDesc(demandSurveyTypeId, paging).getContent()
-                    .stream().map(item -> addImagesTo(item))
+                    .stream().map(item -> {
+                        ItemResponseDto itemResponseDto = addImagesTo(item);
+                        return addPercentageTo(itemResponseDto);
+                    })
                     .collect(Collectors.toList());
             return itemResponseDtoList;
         }
 
         List<ItemResponseDto> itemResponseDtoList = itemRepository.findAllByDemandSurveyTypeIdAndCategoryIdOrderByCreatedAtDesc(demandSurveyTypeId, categoryId, paging).getContent()
-                .stream().map(item -> addImagesTo(item))
+                .stream().map(item -> {
+                    ItemResponseDto itemResponseDto = addImagesTo(item);
+                    return addPercentageTo(itemResponseDto);
+                })
                 .collect(Collectors.toList());
         return itemResponseDtoList;
     }
@@ -176,6 +186,14 @@ public class ItemService {
 
         ItemResponseDto itemResponseDto = modelMapper.map(item, ItemResponseDto.class);
         itemResponseDto.setImageList(imageList);
+        return itemResponseDto;
+    }
+
+    public ItemResponseDto addPercentageTo(ItemResponseDto itemResponseDto) {
+        if (buyRepository.findAllByItemId(itemResponseDto.getId()).isEmpty())
+            itemResponseDto.setPercentage(0F);
+        else
+            itemResponseDto.setPercentage(buyRepository.selectTotalCountByItemId(itemResponseDto.getId()) / itemResponseDto.getMinNumber() * 100);
         return itemResponseDto;
     }
 }

@@ -47,4 +47,6 @@ public class ItemResponseDto {
     private DemandSurveyType demandSurveyType;
 
     private List<ImageResponseDto> imageList;
+
+    private Float percentage = null;
 }
