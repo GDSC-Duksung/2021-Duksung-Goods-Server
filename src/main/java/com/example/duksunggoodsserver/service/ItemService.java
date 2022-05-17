@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 public class ItemService {
 
     private final ItemRepository itemRepository;
+    private final ItemLikeRepository itemLikeRepository;
     private final CategoryRepository categoryRepository;
     private final DemandSurveyTypeRepository demandSurveyTypeRepository;
     private final ImageRepository imageRepository;
@@ -41,7 +42,7 @@ public class ItemService {
     private final ModelMapper modelMapper;
 
     @Transactional
-    public List<ItemResponseDto> getHomeItem() {
+    public List<ItemResponseDto> getHomeItem(HttpServletRequest req) {
         List<ItemResponseDto> itemResponseDtoList = new ArrayList<>();
 
         // 성공임박굿즈
@@ -86,6 +87,21 @@ public class ItemService {
             itemResponseDtoList.add(null);
             itemResponseDtoList.add(null);
         }
+
+        if (req.getHeader("Authorization") != null) {
+            Optional<User> user = userService.getCurrentUser(req);
+
+            List<Long> itemLikeIdList = itemLikeRepository.findAllByUserOrderByIdDesc(user.get())
+                    .stream().map(itemLike -> itemLike.getItem().getId())
+                    .collect(Collectors.toList());
+
+            return itemResponseDtoList
+                    .stream().map(item -> itemLikeIdList.contains(item.getId())
+                            ? addLike(modelMapper.map(item, ItemResponseDto.class), true)
+                            : addLike(modelMapper.map(item, ItemResponseDto.class), false))
+                    .collect(Collectors.toList());
+        }
+
         return itemResponseDtoList;
     }
 
@@ -102,15 +118,28 @@ public class ItemService {
     }
 
     @Transactional
-    public ItemResponseDto getItemDetail(Long itemId) {
+    public ItemResponseDto getItemDetail(HttpServletRequest req, Long itemId) {
         Optional<Item> item = Optional.ofNullable(itemRepository.findById(itemId)
                 .orElseThrow(() -> new ResourceNotFoundException("item", "itemId", itemId)));
         ItemResponseDto itemResponseDto = addImagesTo(item.get());
+
+        if (req.getHeader("Authorization") != null) {
+            Optional<User> user = userService.getCurrentUser(req);
+
+            List<Long> itemLikeIdList = itemLikeRepository.findAllByUserOrderByIdDesc(user.get())
+                    .stream().map(itemLike -> itemLike.getItem().getId())
+                    .collect(Collectors.toList());
+
+            itemResponseDto = itemLikeIdList.contains(itemResponseDto.getId())
+                    ? addLike(itemResponseDto, true)
+                    : addLike(itemResponseDto, false);
+        }
+
         return addPercentageTo(itemResponseDto);
     }
 
     @Transactional
-    public List<ItemResponseDto> getItemListByDemandSurveyTypeAndCategory(Long demandSurveyTypeId, Long categoryId, int page) {
+    public List<ItemResponseDto> getItemListByDemandSurveyTypeAndCategory(HttpServletRequest req, Long demandSurveyTypeId, Long categoryId, int page) {
         Pageable paging = PageRequest.of(page-1, 10);
         if (categoryId == 0) { // 카테고리가 All을 뜻함
             List<ItemResponseDto> itemResponseDtoList = itemRepository.findAllByDemandSurveyTypeIdOrderByCreatedAtDesc(demandSurveyTypeId, paging).getContent()
@@ -128,6 +157,21 @@ public class ItemService {
                     return addPercentageTo(itemResponseDto);
                 })
                 .collect(Collectors.toList());
+
+        if (req.getHeader("Authorization") != null) {
+            Optional<User> user = userService.getCurrentUser(req);
+
+            List<Long> itemLikeIdList = itemLikeRepository.findAllByUserOrderByIdDesc(user.get())
+                    .stream().map(itemLike -> itemLike.getItem().getId())
+                    .collect(Collectors.toList());
+
+            return itemResponseDtoList
+                    .stream().map(item -> itemLikeIdList.contains(item.getId())
+                            ? addLike(modelMapper.map(item, ItemResponseDto.class), true)
+                            : addLike(modelMapper.map(item, ItemResponseDto.class), false))
+                    .collect(Collectors.toList());
+        }
+
         return itemResponseDtoList;
     }
 
@@ -212,6 +256,11 @@ public class ItemService {
             itemResponseDto.setPercentage(0F);
         else
             itemResponseDto.setPercentage(buyRepository.selectTotalCountByItemId(itemResponseDto.getId()) / itemResponseDto.getMinNumber() * 100);
+        return itemResponseDto;
+    }
+
+    public ItemResponseDto addLike(ItemResponseDto itemResponseDto, boolean like) {
+        itemResponseDto.setLikeOrNot(like);
         return itemResponseDto;
     }
 }

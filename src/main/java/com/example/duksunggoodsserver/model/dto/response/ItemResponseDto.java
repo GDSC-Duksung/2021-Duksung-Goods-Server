@@ -49,4 +49,6 @@ public class ItemResponseDto {
     private List<ImageResponseDto> imageList;
 
     private Float percentage = null;
+
+    private boolean likeOrNot = false;
 }
