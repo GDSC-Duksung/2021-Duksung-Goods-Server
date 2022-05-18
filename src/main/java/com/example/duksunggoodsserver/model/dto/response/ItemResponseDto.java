@@ -48,6 +48,8 @@ public class ItemResponseDto {
 
     private List<ImageResponseDto> imageList;
 
+    private Long numberOfGathered = 0L;
+
     private Float percentage = null;
 
     private boolean likeOrNot = false;

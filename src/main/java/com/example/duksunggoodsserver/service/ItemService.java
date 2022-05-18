@@ -111,7 +111,7 @@ public class ItemService {
         List<ItemResponseDto> itemResponseDtoList = itemRepository.findAllByUserId(user.get().getId())
                 .stream().map(item -> {
                     ItemResponseDto itemResponseDto = addImagesTo(item);
-                    return addPercentageTo(itemResponseDto);
+                    return addPercentageAndNumberOfGatheredTo(itemResponseDto);
                 })
                 .collect(Collectors.toList());
         return itemResponseDtoList;
@@ -135,7 +135,7 @@ public class ItemService {
                     : addLike(itemResponseDto, false);
         }
 
-        return addPercentageTo(itemResponseDto);
+        return addPercentageAndNumberOfGatheredTo(itemResponseDto);
     }
 
     @Transactional
@@ -145,7 +145,7 @@ public class ItemService {
             List<ItemResponseDto> itemResponseDtoList = itemRepository.findAllByDemandSurveyTypeIdOrderByCreatedAtDesc(demandSurveyTypeId, paging).getContent()
                     .stream().map(item -> {
                         ItemResponseDto itemResponseDto = addImagesTo(item);
-                        return addPercentageTo(itemResponseDto);
+                        return addPercentageAndNumberOfGatheredTo(itemResponseDto);
                     })
                     .collect(Collectors.toList());
             return itemResponseDtoList;
@@ -154,7 +154,7 @@ public class ItemService {
         List<ItemResponseDto> itemResponseDtoList = itemRepository.findAllByDemandSurveyTypeIdAndCategoryIdOrderByCreatedAtDesc(demandSurveyTypeId, categoryId, paging).getContent()
                 .stream().map(item -> {
                     ItemResponseDto itemResponseDto = addImagesTo(item);
-                    return addPercentageTo(itemResponseDto);
+                    return addPercentageAndNumberOfGatheredTo(itemResponseDto);
                 })
                 .collect(Collectors.toList());
 
@@ -251,11 +251,14 @@ public class ItemService {
         return itemResponseDto;
     }
 
-    public ItemResponseDto addPercentageTo(ItemResponseDto itemResponseDto) {
+    public ItemResponseDto addPercentageAndNumberOfGatheredTo(ItemResponseDto itemResponseDto) {
         if (buyRepository.findAllByItemId(itemResponseDto.getId()).isEmpty())
             itemResponseDto.setPercentage(0F);
-        else
-            itemResponseDto.setPercentage(buyRepository.selectTotalCountByItemId(itemResponseDto.getId()) / itemResponseDto.getMinNumber() * 100);
+        else {
+            float total = buyRepository.selectTotalCountByItemId(itemResponseDto.getId());
+            itemResponseDto.setPercentage(total / itemResponseDto.getMinNumber() * 100);
+            itemResponseDto.setNumberOfGathered((long)total);
+        }
         return itemResponseDto;
     }
 
